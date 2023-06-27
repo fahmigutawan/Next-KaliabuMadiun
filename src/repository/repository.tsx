@@ -7,15 +7,16 @@ class Repository {
     fbFirestore: Firestore
 
     constructor() {
-        const firebaseConfig = {
-            apiKey: process.env.NEXT_FIREBASE_apiKey,
-            authDomain: process.env.NEXT_FIREBASE_authDomain,
-            projectId: process.env.NEXT_FIREBASE_projectId,
-            storageBucket: process.env.NEXT_FIREBASE_storageBucket,
-            messagingSenderId: process.env.NEXT_FIREBASE_messagingSenderId,
-            appId: process.env.NEXT_FIREBASE_appId
-        };
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(
+            {
+                apiKey: process.env.NEXT_FIREBASE_apiKey,
+                authDomain: process.env.NEXT_FIREBASE_authDomain,
+                projectId: process.env.NEXT_FIREBASE_projectId,
+                storageBucket: process.env.NEXT_FIREBASE_storageBucket,
+                messagingSenderId: process.env.NEXT_FIREBASE_messagingSenderId,
+                appId: process.env.NEXT_FIREBASE_appId
+            }
+        )
 
         this.fbAuth = getAuth(app)
         this.fbFirestore = getFirestore(app)
