@@ -1,24 +1,21 @@
-import {FirebaseApp, initializeApp} from "firebase/app";
-import {Auth, getAuth} from "firebase/auth";
-import {Firestore, getFirestore} from "firebase/firestore";
+import {initializeApp} from "@firebase/app";
+import {getAuth, RecaptchaVerifier, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber} from 'firebase/auth'
 
-class Repository {
-    fbAuth: Auth
-    fbFirestore: Firestore
+const fbApp = initializeApp(
+    {
+        apiKey: process.env.NEXT_FIREBASE_apiKey,
+        authDomain: process.env.NEXT_FIREBASE_authDomain,
+        projectId: process.env.NEXT_FIREBASE_projectId,
+        storageBucket: process.env.NEXT_FIREBASE_storageBucket,
+        messagingSenderId: process.env.NEXT_FIREBASE_messagingSenderId,
+        appId: process.env.NEXT_FIREBASE_appId
+    }
+)
 
-    constructor() {
-        const app = initializeApp(
-            {
-                apiKey: process.env.NEXT_FIREBASE_apiKey,
-                authDomain: process.env.NEXT_FIREBASE_authDomain,
-                projectId: process.env.NEXT_FIREBASE_projectId,
-                storageBucket: process.env.NEXT_FIREBASE_storageBucket,
-                messagingSenderId: process.env.NEXT_FIREBASE_messagingSenderId,
-                appId: process.env.NEXT_FIREBASE_appId
-            }
-        )
+export class Repository {
+    auth = getAuth(fbApp)
 
-        this.fbAuth = getAuth(app)
-        this.fbFirestore = getFirestore(app)
+    async signInWithGoogle() {
+        return await signInWithPopup(this.auth, new GoogleAuthProvider())
     }
 }
