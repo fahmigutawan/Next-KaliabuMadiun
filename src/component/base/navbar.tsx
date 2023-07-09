@@ -1,5 +1,6 @@
 'use client'
 
+import { Routes } from "@/routes/routes"
 import { Typography } from "@mui/material"
 import Link from "next/link"
 
@@ -12,27 +13,27 @@ export const Navbar = () => {
     const navbarItems: NavbarItem[] = [
         {
             word: 'BERANDA',
-            route: ''
+            route: Routes.HomePage
         },
         {
             word: 'PROFIL',
-            route: ''
+            route: Routes.ProfilePage
         },
         {
             word: 'PEMERINTAHAN',
-            route: ''
+            route: Routes.GovermentPage
         },
         {
             word: 'INFORMASI',
-            route: ''
+            route: Routes.InformationPage
         },
         {
             word: 'LAYANAN',
-            route: ''
+            route: Routes.ServicesPage
         },
         {
             word: 'PRODUK UNGGULAN',
-            route: ''
+            route: Routes.ProductPage
         }
     ]
 
@@ -54,7 +55,7 @@ export const Navbar = () => {
                     navbarItems.map(item => {
                         return (
                             <Link href={item.route}>
-                                <Typography className='text-black text-[14px]'>{item.word}</Typography>
+                                <Typography className='text-black text-[14px] font-semibold'>{item.word}</Typography>
                             </Link>
                         )
                     })

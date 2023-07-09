@@ -4,6 +4,9 @@ import '../globals.css'
 import { Inter } from 'next/font/google'
 import { AppProvider } from "@/context/provider";
 import { Navbar } from '@/component/base/navbar';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { Routes } from '@/routes/routes';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,11 +16,40 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const [showNavbar, setShowNavbar] = useState(false)
+    const pathname = usePathname()
+
+    useEffect(() => {
+        switch(pathname){
+            case Routes.HomePage:
+                setShowNavbar(true)
+                break
+            case Routes.ProfilePage:
+                setShowNavbar(true)
+                break
+            case Routes.GovermentPage:
+                setShowNavbar(true)
+                break
+            case Routes.InformationPage:
+                setShowNavbar(true)
+                break
+            case Routes.ServicesPage:
+                setShowNavbar(true)
+                break
+            case Routes.ProductPage:
+                setShowNavbar(true)
+                break
+            default:
+                setShowNavbar(false)
+                break
+        }
+    }, [pathname])
+
     return (
         <html lang="en">
             <AppProvider>
                 <body className={`${inter.className} h-[100vh] bg-white`}>
-                    <Navbar />
+                    {showNavbar && <Navbar />}
                     {children}
                 </body>
             </AppProvider>
