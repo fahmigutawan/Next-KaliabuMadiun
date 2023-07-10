@@ -1,13 +1,27 @@
 'use client'
 
 import { ImagePicker } from "@/component/base/image-picker";
+import { AppContext } from "@/context/provider";
+import { AllBannerResponse } from "@/model/response/home-banner/all-banner-response";
 import { Button, Modal, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { DocumentData } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
+import toast from 'react-hot-toast'
 
 export default function AdminHomeBanner() {
     const [showAdd, setShowAdd] = useState(false)
     const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
     const [link, setLink] = useState('')
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [data, setData] = useState<AllBannerResponse[]>([])
+    const repository = useContext(AppContext).repository
+
+    useEffect(() => {
+        repository.getAllBanner().then(res => {
+            setData(res)
+        })
+    },[])
 
     return (
         <div className='p-[32px] flex flex-col space-y-[16px] items-end'>
@@ -25,9 +39,15 @@ export default function AdminHomeBanner() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-
-                    </tr>
+                    {data.map(s => {
+                        return (
+                            <tr>
+                                <td className='w-1/3 align-middle'><img className='max-h-72 w-full object-cover' src={s.img_url} alt="" /></td>
+                                <td className='w-1/3 align-middle'>{s.link}</td>
+                                <td className='w-1/3 align-middle'>COMMAND</td>
+                            </tr>
+                        )
+                    })}
                 </tbody>
             </table>
             <Modal
@@ -39,7 +59,7 @@ export default function AdminHomeBanner() {
             >
                 <div className='w-full h-full bg-white p-[16px] overflow-auto flex flex-col justify-between space-y-[32px]'>
                     <Typography className='text-black'>Tambah Banner</Typography>
-                    <div className='flex flex-col space-y-[32px]'>
+                    <div className='flex flex-col space-y-[16px]'>
                         <ImagePicker onFilePicked={(s) => {
                             setThumbnailFile(s)
                         }} />
@@ -50,9 +70,33 @@ export default function AdminHomeBanner() {
                             placeholder="Link yang dituju apabila gambar diklik..."
                             className='w-full'
                         />
+                        <TextField
+                            onChange={(s) => {
+                                setTitle(s.target.value)
+                            }}
+                            placeholder="Judul yang ditampilkan"
+                            className='w-full'
+                        />
+                        <TextField
+                            onChange={(s) => {
+                                setDescription(s.target.value)
+                            }}
+                            placeholder="Deskripsi yang ditampilkan"
+                            className='w-full'
+                        />
                     </div>
                     <Button onClick={() => {
-
+                        if (thumbnailFile != null) {
+                            repository.adminAddHomeBanner(
+                                thumbnailFile,
+                                link,
+                                title,
+                                description,
+                                () => { setShowAdd(false) }
+                            )
+                        } else {
+                            toast.error("Masukkan gambar")
+                        }
                     }}>KIRIM</Button>
                 </div>
             </Modal>

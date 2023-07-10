@@ -17,6 +17,10 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: black;
   background: white
+}
+
+table, th, td {
+  border: 1px solid black;
 }

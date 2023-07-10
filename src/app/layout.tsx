@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import { Routes } from '@/routes/routes';
 import '@fontsource/poppins'
 import { createTheme } from '@mui/material';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
     title: 'Create Next App',
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <body className={`h-[100vh] bg-white`}>
                     {showNavbar && <Navbar />}
                     {children}
+                    <Toaster/>
                 </body>
             </AppProvider>
         </html>
