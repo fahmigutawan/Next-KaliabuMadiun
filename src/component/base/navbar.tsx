@@ -3,6 +3,7 @@
 import { Routes } from "@/routes/routes"
 import { Typography } from "@mui/material"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 type NavbarItem = {
     word: string,
@@ -10,6 +11,7 @@ type NavbarItem = {
 }
 
 export const Navbar = () => {
+    const pathname = usePathname()
     const navbarItems: NavbarItem[] = [
         {
             word: 'BERANDA',
@@ -39,7 +41,7 @@ export const Navbar = () => {
 
     return (
         <div className='w-full h-[120px] px-[48px] bg-white flex items-center justify-between shadow-sm'>
-            <div className='flex items-center space-x-[16px]'>
+            <Link href={Routes.HomePage} className='flex items-center space-x-[16px]'>
                 <img src='/images/kab_madiun.png' alt="" className='w-[70px]' />
                 <div>
                     <Typography
@@ -49,13 +51,13 @@ export const Navbar = () => {
                         className='text-black text-[14px] font-normal'
                     >Kabupaten Madiun</Typography>
                 </div>
-            </div>
+            </Link>
             <div className='flex items-center space-x-[16px]'>
                 {
                     navbarItems.map(item => {
                         return (
                             <Link href={item.route}>
-                                <Typography className='text-black text-[14px] font-semibold'>{item.word}</Typography>
+                                <Typography className={`${(item.route == pathname) ? 'text-primary500 font-extrabold': 'text-black'} text-[14px]`}>{item.word}</Typography>
                             </Link>
                         )
                     })

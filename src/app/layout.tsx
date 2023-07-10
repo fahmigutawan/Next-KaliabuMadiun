@@ -1,14 +1,14 @@
 'use client'
 
 import '../globals.css'
-import { Inter } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import { AppProvider } from "@/context/provider";
 import { Navbar } from '@/component/base/navbar';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Routes } from '@/routes/routes';
-
-const inter = Inter({ subsets: ['latin'] })
+import '@fontsource/poppins'
+import { createTheme } from '@mui/material';
 
 export const metadata = {
     title: 'Create Next App',
@@ -20,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     const pathname = usePathname()
 
     useEffect(() => {
+        console.log("PATHNAME => " + pathname)
         switch(pathname){
             case Routes.HomePage:
                 setShowNavbar(true)
@@ -48,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en">
             <AppProvider>
-                <body className={`${inter.className} h-[100vh] bg-white`}>
+                <body className={`h-[100vh] bg-white`}>
                     {showNavbar && <Navbar />}
                     {children}
                 </body>
