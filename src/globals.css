@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -23,4 +24,20 @@ body {
 
 table, th, td {
   border: 1px solid black;
+}
+
+p{
+  font-family:'Poppins'
+}
+
+.outlined-button {
+  background-color: transparent;
+  border: 1px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 16px;
+}
+
+.outlined-button:hover{
+  background-color: '#f7f5f3';
 }

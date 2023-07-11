@@ -42,7 +42,7 @@ export const HomeBanner = () => {
                             <Link href={item.link}>
                                 <img src={item.img_url} alt="" className='w-full aspect-[16/5] absolute top-[120] left-0 object-cover' />
                                 <div className='w-full aspect-[16/5] flex flex-col justify-end p-[32px] relative bg-gradient-to-t from-black to-transparent'>
-                                    <p className='text-[36px] line-clamp-1 text-white font-semibold'>{item.title}</p>
+                                    <p className='text-[28px] line-clamp-1 text-white font-semibold'>{item.title}</p>
                                     <p className='text-[18px] line-clamp-3 text-white'>{item.description}</p>
                                 </div>
                             </Link>

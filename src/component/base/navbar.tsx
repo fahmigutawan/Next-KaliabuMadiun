@@ -44,12 +44,12 @@ export const Navbar = () => {
             <Link href={Routes.HomePage} className='flex items-center space-x-[16px]'>
                 <img src='/images/kab_madiun.png' alt="" className='w-[70px]' />
                 <div>
-                    <Typography
+                    <p
                         className='text-black text-[14px] font-semibold'
-                    >Desa Kaliabu</Typography>
-                    <Typography
+                    >Desa Kaliabu</p>
+                    <p
                         className='text-black text-[14px] font-normal'
-                    >Kabupaten Madiun</Typography>
+                    >Kabupaten Madiun</p>
                 </div>
             </Link>
             <div className='flex items-center space-x-[16px]'>
@@ -57,7 +57,7 @@ export const Navbar = () => {
                     navbarItems.map(item => {
                         return (
                             <Link key={item.word} href={item.route}>
-                                <Typography className={`${(item.route == pathname) ? 'text-primary500 font-extrabold': 'text-black'} text-[14px]`}>{item.word}</Typography>
+                                <p className={`${(item.route == pathname) ? 'text-primary500 font-extrabold': 'text-black'} text-[14px]`}>{item.word}</p>
                             </Link>
                         )
                     })
