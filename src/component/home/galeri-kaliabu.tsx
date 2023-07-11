@@ -23,7 +23,7 @@ export const GaleriKaliabu = () => {
             {/*ITEMS BOTTOM */}
             <div className='flex space-x-[16px]'>
                 {[1,2,3,4,5].map((s) => {
-                    return <div className='w-1/5 aspect-[16/9] bg-slate-600'/>
+                    return <div key={s} className='w-1/5 aspect-[16/9] bg-slate-600'/>
                 })}
             </div>
         </div>
