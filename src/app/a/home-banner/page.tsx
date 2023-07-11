@@ -1,5 +1,6 @@
 'use client'
 
+import { AdminCommandPanel } from "@/component/admin/admin-command-panel";
 import { ImagePicker } from "@/component/base/image-picker";
 import { AppContext } from "@/context/provider";
 import { AllBannerResponse } from "@/model/response/home-banner/all-banner-response";
@@ -21,7 +22,7 @@ export default function AdminHomeBanner() {
         repository.getAllBanner().then(res => {
             setData(res)
         })
-    },[])
+    }, [])
 
     return (
         <div className='p-[32px] flex flex-col space-y-[16px] items-end'>
@@ -29,6 +30,7 @@ export default function AdminHomeBanner() {
                 onClick={() => {
                     setShowAdd(true)
                 }}
+                className='bg-primary500 hover:bg-primary600 text-white'
             >TAMBAH</Button>
             <table className='w-full'>
                 <thead className='bg-primary400'>
@@ -42,9 +44,15 @@ export default function AdminHomeBanner() {
                     {data.map(s => {
                         return (
                             <tr>
-                                <td className='w-1/3 align-middle'><img className='max-h-72 w-full object-cover' src={s.img_url} alt="" /></td>
-                                <td className='w-1/3 align-middle'>{s.link}</td>
-                                <td className='w-1/3 align-middle'>COMMAND</td>
+                                <td className='w-1/3 align-middle'>
+                                    <img className='max-h-72 w-full object-cover' src={s.img_url} alt="" />
+                                </td>
+                                <td className='w-1/3 align-middle'>
+                                    {s.link}
+                                </td>
+                                <td className='w-1/3 align-middle'>
+                                    <AdminCommandPanel />
+                                </td>
                             </tr>
                         )
                     })}
