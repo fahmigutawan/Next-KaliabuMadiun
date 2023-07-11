@@ -7,7 +7,7 @@ import { FaRegNewspaper } from 'react-icons/fa'
 
 export const BeritaTerkini = () => {
     return (
-        <div>
+        <div className='flex flex-col space-y-[16px]'>
             <div className='flex justify-between'>
                 <div className='flex space-x-[16px]'>
                     <FaRegNewspaper color='#000000' className='w-[32px] h-[32px]' />
