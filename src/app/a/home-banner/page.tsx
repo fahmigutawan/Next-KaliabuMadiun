@@ -43,7 +43,7 @@ export default function AdminHomeBanner() {
                 <tbody>
                     {data.map(s => {
                         return (
-                            <tr>
+                            <tr key={s.id}>
                                 <td className='w-1/3 align-middle'>
                                     <img className='max-h-72 w-full object-cover' src={s.img_url} alt="" />
                                 </td>

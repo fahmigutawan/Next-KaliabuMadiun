@@ -38,7 +38,7 @@ export const HomeBanner = () => {
             >
                 {data.map(item => {
                     return (
-                        <SwiperSlide>
+                        <SwiperSlide key={item.id}>
                             <Link href={item.link}>
                                 <img src={item.img_url} alt="" className='w-full aspect-[16/5] absolute top-[120] left-0 object-cover' />
                                 <div className='w-full aspect-[16/5] flex flex-col justify-end p-[32px] relative bg-gradient-to-t from-black to-transparent'>

@@ -56,7 +56,7 @@ export const Navbar = () => {
                 {
                     navbarItems.map(item => {
                         return (
-                            <Link href={item.route}>
+                            <Link key={item.word} href={item.route}>
                                 <Typography className={`${(item.route == pathname) ? 'text-primary500 font-extrabold': 'text-black'} text-[14px]`}>{item.word}</Typography>
                             </Link>
                         )
