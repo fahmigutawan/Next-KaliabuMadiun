@@ -1,9 +1,11 @@
 'use client'
 
 import { AdminCommandPanel } from "@/component/admin/admin-command-panel";
+import { AdminHomeBannerAdd } from "@/component/admin/home-banner/admin-homebanner-add";
+import { AdminHomeBannerEdit } from "@/component/admin/home-banner/admin-homebanner-edit";
 import { ImagePicker } from "@/component/base/image-picker";
 import { AppContext } from "@/context/provider";
-import { AllBannerResponse } from "@/model/response/home-banner/all-banner-response";
+import { BannerResponse } from "@/model/response/home-banner/banner-response";
 import { Button, Modal, TextField, Typography } from "@mui/material";
 import { DocumentData } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
@@ -11,11 +13,9 @@ import toast from 'react-hot-toast'
 
 export default function AdminHomeBanner() {
     const [showAdd, setShowAdd] = useState(false)
-    const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
-    const [link, setLink] = useState('')
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
-    const [data, setData] = useState<AllBannerResponse[]>([])
+    const [showEdit, setShowEdit] = useState(false)
+    const [data, setData] = useState<BannerResponse[]>([])
+    const [pickedData, setPickedData] = useState<BannerResponse | null>(null)
     const repository = useContext(AppContext).repository
 
     useEffect(() => {
@@ -51,13 +51,23 @@ export default function AdminHomeBanner() {
                                     {s.link}
                                 </td>
                                 <td className='w-1/3 align-middle'>
-                                    <AdminCommandPanel />
+                                    <AdminCommandPanel
+                                        editClicked={() => {
+                                            setPickedData(s)
+                                            setShowEdit(true)
+                                        }}
+                                        deleteClicked={() => {
+
+                                        }}
+                                    />
                                 </td>
                             </tr>
                         )
                     })}
                 </tbody>
             </table>
+
+            {/*All Modals*/}
             <Modal
                 className='flex justify-center items-center px-[128px] py-[32px] overflow-auto'
                 open={showAdd}
@@ -65,49 +75,27 @@ export default function AdminHomeBanner() {
                     setShowAdd(false)
                 }}
             >
-                <div className='w-full h-full bg-white p-[16px] overflow-auto flex flex-col justify-between space-y-[32px]'>
-                    <Typography className='text-black'>Tambah Banner</Typography>
-                    <div className='flex flex-col space-y-[16px]'>
-                        <ImagePicker onFilePicked={(s) => {
-                            setThumbnailFile(s)
-                        }} />
-                        <TextField
-                            onChange={(s) => {
-                                setLink(s.target.value)
-                            }}
-                            placeholder="Link yang dituju apabila gambar diklik..."
-                            className='w-full'
-                        />
-                        <TextField
-                            onChange={(s) => {
-                                setTitle(s.target.value)
-                            }}
-                            placeholder="Judul yang ditampilkan"
-                            className='w-full'
-                        />
-                        <TextField
-                            onChange={(s) => {
-                                setDescription(s.target.value)
-                            }}
-                            placeholder="Deskripsi yang ditampilkan"
-                            className='w-full'
-                        />
-                    </div>
-                    <Button onClick={() => {
-                        if (thumbnailFile != null) {
-                            repository.adminAddHomeBanner(
-                                thumbnailFile,
-                                link,
-                                title,
-                                description,
-                                () => { setShowAdd(false) }
-                            )
-                        } else {
-                            toast.error("Masukkan gambar")
-                        }
-                    }}>KIRIM</Button>
-                </div>
+                <AdminHomeBannerAdd
+                    onShowAddChange={(s) => {
+                        setShowAdd(s)
+                    }}
+                />
             </Modal>
+            {pickedData && <Modal
+                className='flex justify-center items-center px-[128px] py-[32px] overflow-auto'
+                open={showEdit}
+                onClose={() => {
+                    setShowEdit(false)
+                }}
+            >
+                <AdminHomeBannerEdit
+                    onShowEditChange={(s) => {
+                        setShowEdit(s)
+                    }}
+                    item={pickedData}
+                />
+            </Modal>
+            }
         </div>
     )
 }

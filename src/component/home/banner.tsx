@@ -1,7 +1,7 @@
 'use client'
 
 import { AppContext } from "@/context/provider"
-import { AllBannerResponse } from "@/model/response/home-banner/all-banner-response"
+import { AllBannerResponse } from "@/model/response/home-banner/banner-response"
 import { Typography } from "@mui/material"
 import { useContext, useEffect, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react";
