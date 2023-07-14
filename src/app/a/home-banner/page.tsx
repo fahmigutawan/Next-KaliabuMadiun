@@ -17,12 +17,14 @@ export default function AdminHomeBanner() {
     const [data, setData] = useState<BannerResponse[]>([])
     const [pickedData, setPickedData] = useState<BannerResponse | null>(null)
     const repository = useContext(AppContext).repository
+    const [shouldRefresh, setShouldRefresh] = useState(false)
 
     useEffect(() => {
         repository.getAllBanner().then(res => {
             setData(res)
+            setShouldRefresh(false)
         })
-    }, [])
+    }, [shouldRefresh])
 
     return (
         <div className='p-[32px] flex flex-col space-y-[16px] items-end'>
@@ -41,7 +43,7 @@ export default function AdminHomeBanner() {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map(s => {
+                    {data.map((s, index) => {
                         return (
                             <tr key={s.id}>
                                 <td className='w-1/3 align-middle'>
@@ -57,7 +59,15 @@ export default function AdminHomeBanner() {
                                             setShowEdit(true)
                                         }}
                                         deleteClicked={() => {
-
+                                            toast.loading("Sedang menghapus")
+                                            repository.adminDeleteHomeBanner(
+                                                s.id,
+                                                () => {
+                                                    toast.dismiss()
+                                                    toast.success("Item berhasil dihapus")
+                                                    setShouldRefresh(true)
+                                                }
+                                            )
                                         }}
                                     />
                                 </td>
@@ -79,6 +89,9 @@ export default function AdminHomeBanner() {
                     onShowAddChange={(s) => {
                         setShowAdd(s)
                     }}
+                    onShouldRefreshChange={(s) => {
+                        setShouldRefresh(s)
+                    }}
                 />
             </Modal>
             {pickedData && <Modal
@@ -91,6 +104,9 @@ export default function AdminHomeBanner() {
                 <AdminHomeBannerEdit
                     onShowEditChange={(s) => {
                         setShowEdit(s)
+                    }}
+                    onShouldRefreshChange={(s) => {
+                        setShouldRefresh(s)
                     }}
                     item={pickedData}
                 />

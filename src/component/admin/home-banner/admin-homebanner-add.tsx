@@ -7,11 +7,13 @@ import { useContext, useState } from "react"
 import toast from "react-hot-toast"
 
 type AdminHomeBannerAddProps = {
-    onShowAddChange:(state:boolean) => void
+    onShowAddChange:(state:boolean) => void,
+    onShouldRefreshChange:(state:boolean) => void
 }
 
 export const AdminHomeBannerAdd:React.FC<AdminHomeBannerAddProps> = ({
-    onShowAddChange
+    onShowAddChange,
+    onShouldRefreshChange
 }) => {
     const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
     const [link, setLink] = useState('')
@@ -55,7 +57,10 @@ export const AdminHomeBannerAdd:React.FC<AdminHomeBannerAddProps> = ({
                         link,
                         title,
                         description,
-                        () => { onShowAddChange(false) }
+                        () => { 
+                            onShowAddChange(false)
+                            onShouldRefreshChange(true)
+                         }
                     )
                 } else {
                     toast.error("Masukkan gambar")

@@ -9,12 +9,14 @@ import toast from "react-hot-toast"
 
 type AdminHomeBannerEditProps = {
     item: BannerResponse,
-    onShowEditChange: (state: boolean) => void
+    onShowEditChange: (state: boolean) => void,
+    onShouldRefreshChange: (state: boolean) => void
 }
 
 export const AdminHomeBannerEdit: React.FC<AdminHomeBannerEditProps> = ({
     item,
-    onShowEditChange
+    onShowEditChange,
+    onShouldRefreshChange
 }) => {
     const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
     const [link, setLink] = useState(item.link)
@@ -58,11 +60,19 @@ export const AdminHomeBannerEdit: React.FC<AdminHomeBannerEditProps> = ({
                 />
             </div>
             <Button onClick={() => {
-                if (thumbnailFile != null) {
-                    /*Handle Edit*/
-                } else {
-                    toast.error("Masukkan gambar")
-                }
+                toast.loading("Sedang mengupdate")
+                repository.adminUpdateHomeBanner(
+                    item.id,
+                    link,
+                    title,
+                    description,
+                    () => {
+                        toast.dismiss()
+                        toast.success("Berhasil di-update")
+                        onShowEditChange(false)
+                        onShouldRefreshChange(true)
+                    }
+                )
             }}>UPDATE</Button>
         </div>
     )

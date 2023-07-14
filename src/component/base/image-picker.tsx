@@ -34,7 +34,10 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({
                         alt=""
                     />
             }
-            <input className='text-black' type='file' onChange={handleFileChange} />
+
+            {!defaultUrl
+                && <input className='text-black' type='file' onChange={handleFileChange} />
+            }
         </div>
     )
 }

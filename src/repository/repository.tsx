@@ -1,9 +1,9 @@
 import { initializeApp } from "@firebase/app";
 import { getAuth, RecaptchaVerifier, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber } from 'firebase/auth'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
-import {addDoc, collection, doc, getDocs, getFirestore, setDoc} from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import imageCompression from 'browser-image-compression';
-import {toast} from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { randomUUID } from "crypto";
 import { AllBannerResponse } from "@/model/response/home-banner/banner-response";
 
@@ -19,12 +19,12 @@ const fbApp = initializeApp(
     }
 )
 
-function create_UUID(){
+function create_UUID() {
     var dt = new Date().getTime();
-    var uuid:string = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (dt + Math.random()*16)%16 | 0;
-        dt = Math.floor(dt/16);
-        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    var uuid: string = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
 }
@@ -33,14 +33,14 @@ export class Repository {
     auth = getAuth(fbApp)
     storage = getStorage(fbApp)
     firestore = getFirestore(fbApp)
-    
-    private homeBannerRef = (filename:string) => {return ref(this.storage, `home-banner/${filename}.jpg`)}
+
+    private homeBannerRef = (filename: string) => { return ref(this.storage, `home-banner/${filename}.jpg`) }
 
     async signInWithGoogle() {
         return await signInWithPopup(this.auth, new GoogleAuthProvider())
     }
 
-    adminAddHomeBanner(image: File, link:string, title:string, description:string, onSuccess:() => void) {
+    adminAddHomeBanner(image: File, link: string, title: string, description: string, onSuccess: () => void) {
         toast.loading("Sedang mengunggah...")
 
         const options = {
@@ -49,7 +49,7 @@ export class Repository {
         }
 
         imageCompression(image, options)
-            .then( (compressedFile) => {
+            .then((compressedFile) => {
                 const randomizedUID = create_UUID()
                 const ref = this.homeBannerRef(randomizedUID)
 
@@ -58,35 +58,79 @@ export class Repository {
                         const id = create_UUID()
                         const ref = doc(this.firestore, 'home-banner', id)
                         setDoc(ref, {
-                            id:id,
-                            url:url,
-                            link:link,
-                            title:title,
-                            description:description
+                            id: id,
+                            url: url,
+                            link: link,
+                            title: title,
+                            description: description,
+                            created_at: serverTimestamp()
                         }).then(() => {
                             toast.dismiss()
                             toast.success("Berhasil diunggah")
                             onSuccess()
                         })
                     })
-                }).catch((err:Error) => {
+                }).catch((err: Error) => {
                     toast.dismiss()
                     toast.error(err.message)
                 })
             })
     }
 
-    async getAllBanner():Promise<AllBannerResponse[]>{
-        return (await getDocs(collection(this.firestore, 'home-banner'))).docs.map(res => {
-            const s:AllBannerResponse = {
-                id: res.data()['id'],
-                img_url: res.data()['url'],
-                link: res.data()['link'],
-                title: res.data()['title'],
-                description: res.data()['description']
-            }
+    async adminUpdateHomeBanner(
+        id: string,
+        link: string,
+        title: string,
+        description: string,
+        onSuccess: () => void
+    ) {
+        const ref = doc(
+            this.firestore,
+            'home-banner',
+            id
+        )
 
-            return s
+        await updateDoc(ref, {
+            link: link,
+            title: title,
+            description: description
+        }).then(() => {
+            onSuccess()
         })
+    }
+
+    async adminDeleteHomeBanner(
+        id:string,
+        onSuccess:() => void
+    ){
+        const ref = doc(
+            this.firestore,
+            'home-banner',
+            id
+        )
+
+        await deleteDoc(ref).then(() => {
+            onSuccess()
+        })
+    }
+
+    async getAllBanner(): Promise<AllBannerResponse[]> {
+        return (
+            await getDocs(
+                query(
+                    collection(this.firestore, 'home-banner'),
+                    orderBy('created_at', 'desc')
+                )
+            )).docs.map(res => {
+                const s: AllBannerResponse = {
+                    id: res.data()['id'],
+                    img_url: res.data()['url'],
+                    link: res.data()['link'],
+                    title: res.data()['title'],
+                    description: res.data()['description']
+                }
+
+                return s
+            })
     }
 }
