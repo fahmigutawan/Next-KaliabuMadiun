@@ -5,7 +5,7 @@ import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, orderBy, que
 import imageCompression from 'browser-image-compression';
 import { toast } from 'react-hot-toast'
 import { randomUUID } from "crypto";
-import { AllBannerResponse } from "@/model/response/home-banner/banner-response";
+import { BannerResponse } from "@/model/response/home-banner/banner-response";
 
 
 const fbApp = initializeApp(
