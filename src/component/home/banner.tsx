@@ -1,7 +1,7 @@
 'use client'
 
 import { AppContext } from "@/context/provider"
-import { AllBannerResponse } from "@/model/response/home-banner/banner-response"
+import { BannerResponse } from "@/model/response/home-banner/banner-response"
 import { Typography } from "@mui/material"
 import { useContext, useEffect, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -11,7 +11,7 @@ import Link from "next/link"
 
 export const HomeBanner = () => {
     const repository = useContext(AppContext).repository
-    const [data, setData] = useState<AllBannerResponse[]>([])
+    const [data, setData] = useState<BannerResponse[]>([])
 
     useEffect(() => {
         repository.getAllBanner().then(res => {

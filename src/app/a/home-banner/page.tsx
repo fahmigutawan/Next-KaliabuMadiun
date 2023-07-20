@@ -10,6 +10,7 @@ import { Button, Modal, TextField, Typography } from "@mui/material";
 import { DocumentData } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import toast from 'react-hot-toast'
+import {useRouter} from "next/navigation";
 
 export default function AdminHomeBanner() {
     const [showAdd, setShowAdd] = useState(false)
@@ -18,6 +19,7 @@ export default function AdminHomeBanner() {
     const [pickedData, setPickedData] = useState<BannerResponse | null>(null)
     const repository = useContext(AppContext).repository
     const [shouldRefresh, setShouldRefresh] = useState(false)
+    const router = useRouter()
 
     useEffect(() => {
         repository.getAllBanner().then(res => {

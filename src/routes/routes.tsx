@@ -6,5 +6,7 @@ export enum Routes {
     ServicesPage = '/u/services',
     ProductPage = '/u/product',
     LoginPage = '/auth/login',
-    RegisterPage = '/auth/register'
+    RegisterPage = '/auth/register',
+    AdminHomeBanner = '/a/home-banner',
+    AdminNews = '/a/news'
 }

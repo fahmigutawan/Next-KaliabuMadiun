@@ -10,7 +10,7 @@ export default function PreFunctionAdmin() {
     
     useEffect(() => {
         setTimeout(() => {
-            router.push(Routes.HomePage)
+            router.push(Routes.AdminHomeBanner)
         }, 1000)
     },[])
 

@@ -1,5 +1,12 @@
 import { initializeApp } from "@firebase/app";
-import { getAuth, RecaptchaVerifier, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber } from 'firebase/auth'
+import {
+    getAuth,
+    RecaptchaVerifier,
+    signInWithPopup,
+    GoogleAuthProvider,
+    signInWithPhoneNumber,
+    signInWithEmailAndPassword
+} from 'firebase/auth'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import imageCompression from 'browser-image-compression';
@@ -35,6 +42,7 @@ export class Repository {
     firestore = getFirestore(fbApp)
 
     private homeBannerRef = (filename: string) => { return ref(this.storage, `home-banner/${filename}.jpg`) }
+    private newsThumbnailRef = (filename:string) => {return ref(this.storage,`news-thumbnail/${filename}.jpg`)}
 
     async signInWithGoogle() {
         return await signInWithPopup(this.auth, new GoogleAuthProvider())
@@ -55,7 +63,7 @@ export class Repository {
 
                 uploadBytes(ref, compressedFile).then(() => {
                     getDownloadURL(ref).then(url => {
-                        const id = create_UUID()
+                        const id = randomizedUID
                         const ref = doc(this.firestore, 'home-banner', id)
                         setDoc(ref, {
                             id: id,
@@ -90,19 +98,22 @@ export class Repository {
             id
         )
 
-        await updateDoc(ref, {
-            link: link,
-            title: title,
-            description: description
-        }).then(() => {
+        await updateDoc(
+            ref,
+            {
+                title: title,
+                link: link,
+                description: description
+            }
+        ).then(() => {
             onSuccess()
         })
     }
 
     async adminDeleteHomeBanner(
-        id:string,
-        onSuccess:() => void
-    ){
+        id: string,
+        onSuccess: () => void
+    ) {
         const ref = doc(
             this.firestore,
             'home-banner',
@@ -114,7 +125,61 @@ export class Repository {
         })
     }
 
-    async getAllBanner(): Promise<AllBannerResponse[]> {
+    async adminAddNews(
+        thumbnailFile: File,
+        title: string,
+        content: string,
+        onSucces: () => void,
+        onFailed: (err: Error) => void
+    ) {
+        const options = {
+            maxSizeMB: 1.5,
+            maxWidthOrHeight: 1024,
+        }
+
+        imageCompression(thumbnailFile, options)
+            .then(compressed => {
+                const randomizedUID = create_UUID()
+                const ref = this.newsThumbnailRef(randomizedUID)
+
+                uploadBytes(ref, compressed).then(res => {
+                    getDownloadURL(ref).then(url => {
+                        const id = randomizedUID
+                        const docRef = doc(this.firestore, 'news', id)
+
+                        setDoc(docRef, {
+                            id:id,
+                            title:title,
+                            thumbnail:url,
+                            content:content,
+                            created_at:serverTimestamp()
+                        }).then(() => {
+                            onSucces()
+                        })
+                    })
+                })
+            })
+            .catch((err:Error) => {
+                onFailed(err)
+            })
+    }
+
+    async adminLogin(
+        email: string,
+        password: string
+    ) {
+        return await signInWithEmailAndPassword(
+            this.auth,
+            email,
+            password
+        )
+    }
+
+    adminIsLogin() {
+        return this.auth.currentUser != null
+    }
+
+    async getAllBanner(): Promise<BannerResponse[]> {
         return (
             await getDocs(
                 query(
@@ -122,7 +187,7 @@ export class Repository {
                     orderBy('created_at', 'desc')
                 )
             )).docs.map(res => {
-                const s: AllBannerResponse = {
+                const s: BannerResponse = {
                     id: res.data()['id'],
                     img_url: res.data()['url'],
                     link: res.data()['link'],
