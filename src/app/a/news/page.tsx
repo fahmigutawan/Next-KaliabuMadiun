@@ -31,8 +31,8 @@ export default function AdminNews() {
                 <thead className='bg-primary400'>
                     <tr>
                         <th className='text-black font-medium'>Gambar</th>
-                        <th className='text-black font-medium'>Link</th>
-                        <th className='text-black font-medium'>Command</th>
+                        <th className='text-black font-medium'>Judul</th>
+                        <th className='text-black font-medium'>Dibuat pada</th>
                     </tr>
                 </thead>
                 {/* <tbody>

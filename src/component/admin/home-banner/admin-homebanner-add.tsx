@@ -48,6 +48,7 @@ export const AdminHomeBannerAdd:React.FC<AdminHomeBannerAddProps> = ({
                     }}
                     placeholder="Deskripsi yang ditampilkan"
                     className='w-full'
+                    multiline={true}
                 />
             </div>
             <Button onClick={() => {
