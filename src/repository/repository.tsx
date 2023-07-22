@@ -12,13 +12,13 @@ import {
     addDoc,
     collection,
     deleteDoc,
-    doc,
+    doc, getDoc,
     getDocs,
     getFirestore, limit,
     orderBy,
     query,
     serverTimestamp,
-    setDoc,
+    setDoc, startAfter,
     updateDoc
 } from 'firebase/firestore'
 import imageCompression from 'browser-image-compression';
@@ -104,6 +104,70 @@ export class Repository {
             }
 
             return s
+        })
+    }
+
+    getFirstPageNews(
+        onSuccess: (data: NewsResponse[]) => void,
+        onFailed: (err: Error) => void
+    ){
+        getDocs(
+            query(
+                collection(this.firestore, 'news'),
+                orderBy('created_at', 'desc'),
+                limit(4)
+            )
+        ).then(res2 => {
+            onSuccess(
+                res2.docs.map(res => {
+                    const s: NewsResponse = {
+                        id: res.data()['id'],
+                        title: res.data()['title'],
+                        content: res.data()['content'],
+                        thumbnail: res.data()['thumbnail']
+                    }
+
+                    return s
+                })
+            )
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+    getNextPageNews(
+        last_id: string,
+        onSuccess: (data: NewsResponse[]) => void,
+        onFailed: (err: Error) => void
+    ) {
+        getDoc(
+            doc(this.firestore, 'news', last_id)
+        ).then(res => {
+            const last_created_at = res['created_at']
+
+            getDocs(
+                query(
+                    collection(this.firestore, 'news'),
+                    orderBy('created_at', 'desc'),
+                    startAfter(last_created_at),
+                    limit(4)
+                )
+            ).then(res2 => {
+                onSuccess(
+                    res2.docs.map(res => {
+                        const s: NewsResponse = {
+                            id: res.data()['id'],
+                            title: res.data()['title'],
+                            content: res.data()['content'],
+                            thumbnail: res.data()['thumbnail']
+                        }
+
+                        return s
+                    })
+                )
+            })
+        }).catch((err: Error) => {
+            onFailed(err)
         })
     }
 
