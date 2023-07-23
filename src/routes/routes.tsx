@@ -1,6 +1,6 @@
 export enum Routes {
     HomePage = '/u/home',
-    ProfilePage = '/u/village-profile',
+    ProfilePage = '/u/profile',
     GovermentPage = '/u/goverment',
     InformationPage = '/u/information',
     NewsPage = '/u/information/news',

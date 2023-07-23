@@ -40,6 +40,8 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
         
         if(pathname.startsWith(Routes.NewsPage)){
             setShowNavbar(true)
+        }else if(pathname.startsWith(Routes.ProfilePage)){
+            setShowNavbar(true)
         }
         
     }, [pathname])
