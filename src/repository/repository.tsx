@@ -1,4 +1,4 @@
-import { initializeApp } from "@firebase/app";
+import {initializeApp} from "@firebase/app";
 import {
     getAuth,
     RecaptchaVerifier,
@@ -7,12 +7,25 @@ import {
     signInWithPhoneNumber,
     signInWithEmailAndPassword
 } from 'firebase/auth'
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
-import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import {getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage'
+import {
+    addDoc,
+    collection,
+    deleteDoc,
+    doc, getDoc,
+    getDocs,
+    getFirestore, limit,
+    orderBy,
+    query,
+    serverTimestamp,
+    setDoc, startAfter,
+    updateDoc
+} from 'firebase/firestore'
 import imageCompression from 'browser-image-compression';
-import { toast } from 'react-hot-toast'
-import { randomUUID } from "crypto";
-import { BannerResponse } from "@/model/response/home-banner/banner-response";
+import {toast} from 'react-hot-toast'
+import {randomUUID} from "crypto";
+import {BannerResponse} from "@/model/response/home-banner/banner-response";
+import {NewsResponse} from "@/model/response/news/news-response";
 
 
 const fbApp = initializeApp(
@@ -41,13 +54,124 @@ export class Repository {
     storage = getStorage(fbApp)
     firestore = getFirestore(fbApp)
 
-    private homeBannerRef = (filename: string) => { return ref(this.storage, `home-banner/${filename}.jpg`) }
-    private newsThumbnailRef = (filename:string) => {return ref(this.storage,`news-thumbnail/${filename}.jpg`)}
+    private homeBannerRef = (filename: string) => {
+        return ref(this.storage, `home-banner/${filename}.jpg`)
+    }
+    private newsThumbnailRef = (filename: string) => {
+        return ref(this.storage, `news-thumbnail/${filename}.jpg`)
+    }
 
     async signInWithGoogle() {
         return await signInWithPopup(this.auth, new GoogleAuthProvider())
     }
 
+    /**USERS API*/
+    async getAllBanner(): Promise<BannerResponse[]> {
+        return (
+            await getDocs(
+                query(
+                    collection(this.firestore, 'home-banner'),
+                    orderBy('created_at', 'desc')
+                )
+            )).docs.map(res => {
+            const s: BannerResponse = {
+                id: res.data()['id'],
+                img_url: res.data()['url'],
+                link: res.data()['link'],
+                title: res.data()['title'],
+                description: res.data()['description']
+            }
+
+            return s
+        })
+    }
+
+    async getLast3News(): Promise<NewsResponse[]> {
+        return (
+            await getDocs(
+                query(
+                    collection(this.firestore, 'news'),
+                    orderBy('created_at', 'desc'),
+                    limit(3)
+                )
+            )
+        ).docs.map(res => {
+            const s: NewsResponse = {
+                id: res.data()['id'],
+                title: res.data()['title'],
+                content: res.data()['content'],
+                thumbnail: res.data()['thumbnail']
+            }
+
+            return s
+        })
+    }
+
+    getFirstPageNews(
+        onSuccess: (data: NewsResponse[]) => void,
+        onFailed: (err: Error) => void
+    ){
+        getDocs(
+            query(
+                collection(this.firestore, 'news'),
+                orderBy('created_at', 'desc'),
+                limit(4)
+            )
+        ).then(res2 => {
+            onSuccess(
+                res2.docs.map(res => {
+                    const s: NewsResponse = {
+                        id: res.data()['id'],
+                        title: res.data()['title'],
+                        content: res.data()['content'],
+                        thumbnail: res.data()['thumbnail']
+                    }
+
+                    return s
+                })
+            )
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+    getNextPageNews(
+        last_id: string,
+        onSuccess: (data: NewsResponse[]) => void,
+        onFailed: (err: Error) => void
+    ) {
+        getDoc(
+            doc(this.firestore, 'news', last_id)
+        ).then(res => {
+            const last_created_at = res['created_at']
+
+            getDocs(
+                query(
+                    collection(this.firestore, 'news'),
+                    orderBy('created_at', 'desc'),
+                    startAfter(last_created_at),
+                    limit(4)
+                )
+            ).then(res2 => {
+                onSuccess(
+                    res2.docs.map(res => {
+                        const s: NewsResponse = {
+                            id: res.data()['id'],
+                            title: res.data()['title'],
+                            content: res.data()['content'],
+                            thumbnail: res.data()['thumbnail']
+                        }
+
+                        return s
+                    })
+                )
+            })
+        }).catch((err: Error) => {
+            onFailed(err)
+        })
+    }
+
+    /**ADMIN API*/
     adminAddHomeBanner(image: File, link: string, title: string, description: string, onSuccess: () => void) {
         toast.loading("Sedang mengunggah...")
 
@@ -148,18 +272,18 @@ export class Repository {
                         const docRef = doc(this.firestore, 'news', id)
 
                         setDoc(docRef, {
-                            id:id,
-                            title:title,
-                            thumbnail:url,
-                            content:content,
-                            created_at:serverTimestamp()
+                            id: id,
+                            title: title,
+                            thumbnail: url,
+                            content: content,
+                            created_at: serverTimestamp()
                         }).then(() => {
                             onSucces()
                         })
                     })
                 })
             })
-            .catch((err:Error) => {
+            .catch((err: Error) => {
                 onFailed(err)
             })
     }
@@ -179,23 +303,4 @@ export class Repository {
         return this.auth.currentUser != null
     }
 
-    async getAllBanner(): Promise<BannerResponse[]> {
-        return (
-            await getDocs(
-                query(
-                    collection(this.firestore, 'home-banner'),
-                    orderBy('created_at', 'desc')
-                )
-            )).docs.map(res => {
-                const s: BannerResponse = {
-                    id: res.data()['id'],
-                    img_url: res.data()['url'],
-                    link: res.data()['link'],
-                    title: res.data()['title'],
-                    description: res.data()['description']
-                }
-
-                return s
-            })
-    }
 }
