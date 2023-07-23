@@ -12,7 +12,6 @@ export const GaleriKaliabu = () => {
                 </div>
                 <button
                     onClick={() => {
-
                     }}
                     className='bg-transparent border border-black px-[8px] rounded hover:bg-slate-100'
                 >Lihat Lainnya</button>

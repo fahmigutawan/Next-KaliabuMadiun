@@ -21,6 +21,9 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             case Routes.GovermentPage:
                 setShowNavbar(true)
                 break
+            case Routes.NewsPage:
+                setShowNavbar(true)
+                break
             case Routes.InformationPage:
                 setShowNavbar(true)
                 break
@@ -34,13 +37,18 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                 setShowNavbar(false)
                 break
         }
+        
+        if(pathname.startsWith(Routes.NewsPage)){
+            setShowNavbar(true)
+        }
+        
     }, [pathname])
 
     return (
         <div>
             {showNavbar && <Navbar />}
             {children}
-            <Footer/>
+            <Footer />
         </div>
     )
 }

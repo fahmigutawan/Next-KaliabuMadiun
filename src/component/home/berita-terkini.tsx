@@ -13,12 +13,10 @@ export const BeritaTerkini = () => {
                     <FaRegNewspaper color='#000000' className='w-[32px] h-[32px]' />
                     <p className='text-[24px] text-black font-bold'>Berita Terkini</p>
                 </div>
-                <button
-                    onClick={() => {
-
-                    }}
-                    className='bg-transparent border border-black px-[8px] rounded hover:bg-slate-100'
-                >Lihat Lainnya</button>
+                <Link
+                    href={'/u/information/news'}
+                    className='bg-transparent border border-black px-[8px] flex items-center justify-center rounded hover:bg-slate-100'
+                >Lihat Lainnya</Link>
             </div>
             <div className='flex w-full space-x-[16px]'>
                 <div className='w-1/2'>

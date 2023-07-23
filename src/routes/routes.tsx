@@ -3,6 +3,7 @@ export enum Routes {
     ProfilePage = '/u/village-profile',
     GovermentPage = '/u/goverment',
     InformationPage = '/u/information',
+    NewsPage = '/u/information/news',
     ServicesPage = '/u/services',
     ProductPage = '/u/product',
     LoginPage = '/auth/login',
