@@ -209,7 +209,7 @@ export class Repository {
             })
     }
 
-    async adminUpdateHomeBanner(
+    adminUpdateHomeBanner(
         id: string,
         link: string,
         title: string,
@@ -222,7 +222,7 @@ export class Repository {
             id
         )
 
-        await updateDoc(
+        updateDoc(
             ref,
             {
                 title: title,
@@ -234,7 +234,7 @@ export class Repository {
         })
     }
 
-    async adminDeleteHomeBanner(
+    adminDeleteHomeBanner(
         id: string,
         onSuccess: () => void
     ) {
@@ -244,12 +244,12 @@ export class Repository {
             id
         )
 
-        await deleteDoc(ref).then(() => {
+        deleteDoc(ref).then(() => {
             onSuccess()
         })
     }
 
-    async adminAddNews(
+    adminAddNews(
         thumbnailFile: File,
         title: string,
         content: string,
@@ -288,7 +288,7 @@ export class Repository {
             })
     }
 
-    async adminUpdateNews(
+    adminUpdateNews(
         id: string,
         title: string,
         content: string,
@@ -301,7 +301,7 @@ export class Repository {
             id
         )
 
-        await updateDoc(
+        updateDoc(
             ref,
             {
                 title: title,
@@ -314,7 +314,7 @@ export class Repository {
         })
     }
 
-    async adminDeleteNews(
+    adminDeleteNews(
         id: string,
         onSuccess: () => void,
         onFailed:(err:Error) => void
@@ -325,11 +325,47 @@ export class Repository {
             id
         )
 
-        await deleteDoc(ref).then(() => {
+        deleteDoc(ref).then(() => {
             onSuccess()
         }).catch((err:Error) => {
             onFailed(err)
         })
+    }
+
+    adminEditTentangDesa(
+        content:string
+    ){
+        const ref = doc(
+            this.firestore,
+            'tentang',
+            'item'
+        )
+
+        updateDoc(
+            ref,
+            {
+                content:content,
+                updated_at:serverTimestamp()
+            }
+        )
+    }
+
+    adminEditSejarahDesa(
+        content:string
+    ){
+        const ref = doc(
+            this.firestore,
+            'sejarah',
+            'item'
+        )
+
+        updateDoc(
+            ref,
+            {
+                content:content,
+                updated_at:serverTimestamp()
+            }
+        )
     }
 
 
