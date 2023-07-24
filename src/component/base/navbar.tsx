@@ -32,11 +32,11 @@ export const Navbar = () => {
                 },
                 {
                     word: 'Sejarah',
-                    route: Routes.ProfilePage,
+                    route: "/u/profile/history",
                 },
                 {
-                    word: 'Geografis',
-                    route: Routes.ProfilePage,
+                    word: 'Geografis & Demografis',
+                    route: "/u/profile/geografis-demografi",
                 },
             ]
         },
@@ -102,7 +102,7 @@ export const Navbar = () => {
                             :
                             <h3 className={`px-4 ${item.submenu && 'cursor-default'} h-full py-5 2xl:py-7`}>{item.word}</h3>}
                         {item.submenu &&
-                            <div className="hidden group-hover/nav:block absolute bg-gray-100 top-[60ypx] w-[140px] z-50 border-[1px]">
+                            <div className="hidden group-hover/nav:block absolute bg-gray-100 z-50 border-[1px]">
                                 {item.submenu.map((item) => (
                                     <Link href={item.route} key={item.word}>
                                         <div className='px-[10px] py-4 w-max group/dropdown'>
