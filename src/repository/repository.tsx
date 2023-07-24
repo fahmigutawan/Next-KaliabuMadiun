@@ -1,4 +1,4 @@
-import {initializeApp} from "@firebase/app";
+import { initializeApp } from "@firebase/app";
 import {
     getAuth,
     RecaptchaVerifier,
@@ -7,7 +7,7 @@ import {
     signInWithPhoneNumber,
     signInWithEmailAndPassword
 } from 'firebase/auth'
-import {getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage'
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import {
     addDoc,
     collection,
@@ -22,13 +22,13 @@ import {
     updateDoc
 } from 'firebase/firestore'
 import imageCompression from 'browser-image-compression';
-import {toast} from 'react-hot-toast'
-import {randomUUID} from "crypto";
-import {BannerResponse} from "@/model/response/home-banner/banner-response";
-import {NewsResponse} from "@/model/response/news/news-response";
-import {TentangResponse} from "@/model/response/tentang/tentang-response";
-import {SejarahResponse} from "@/model/response/sejarah/sejarah-response";
-import {GeoDemoResponse} from "@/model/response/geo-demo/geo-demo-response";
+import { toast } from 'react-hot-toast'
+import { randomUUID } from "crypto";
+import { BannerResponse } from "@/model/response/home-banner/banner-response";
+import { NewsResponse } from "@/model/response/news/news-response";
+import { TentangResponse } from "@/model/response/tentang/tentang-response";
+import { SejarahResponse } from "@/model/response/sejarah/sejarah-response";
+import { GeoDemoResponse } from "@/model/response/geo-demo/geo-demo-response";
 
 
 const fbApp = initializeApp(
@@ -63,6 +63,9 @@ export class Repository {
     private newsThumbnailRef = (filename: string) => {
         return ref(this.storage, `news-thumbnail/${filename}.jpg`)
     }
+    private sopPdfRef = (filename: string) => {
+        return ref(this.storage, `sop-desa/${filename}.pdf`)
+    }
 
     async signInWithGoogle() {
         return await signInWithPopup(this.auth, new GoogleAuthProvider())
@@ -77,16 +80,16 @@ export class Repository {
                     orderBy('created_at', 'desc')
                 )
             )).docs.map(res => {
-            const s: BannerResponse = {
-                id: res.data()['id'],
-                img_url: res.data()['url'],
-                link: res.data()['link'],
-                title: res.data()['title'],
-                description: res.data()['description']
-            }
+                const s: BannerResponse = {
+                    id: res.data()['id'],
+                    img_url: res.data()['url'],
+                    link: res.data()['link'],
+                    title: res.data()['title'],
+                    description: res.data()['description']
+                }
 
-            return s
-        })
+                return s
+            })
     }
 
     async getLast3News(): Promise<NewsResponse[]> {
@@ -113,7 +116,7 @@ export class Repository {
     getFirstPageNews(
         onSuccess: (data: NewsResponse[]) => void,
         onFailed: (err: Error) => void
-    ){
+    ) {
         getDocs(
             query(
                 collection(this.firestore, 'news'),
@@ -133,7 +136,7 @@ export class Repository {
                     return s
                 })
             )
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
@@ -175,9 +178,9 @@ export class Repository {
     }
 
     getTentangDesa(
-        onSuccess:(item:TentangResponse) => void,
-        onFailed:(err:Error) => void
-    ){
+        onSuccess: (item: TentangResponse) => void,
+        onFailed: (err: Error) => void
+    ) {
         const ref = doc(
             this.firestore,
             'tentang',
@@ -188,19 +191,19 @@ export class Repository {
             .then(res => {
                 onSuccess(
                     {
-                        content:res.get('content')
+                        content: res.get('content')
                     }
                 )
             })
-            .catch((err:Error) => {
+            .catch((err: Error) => {
                 onFailed(err)
             })
     }
 
     getSejarahDesa(
-        onSuccess:(item:SejarahResponse) => void,
-        onFailed:(err:Error) => void
-    ){
+        onSuccess: (item: SejarahResponse) => void,
+        onFailed: (err: Error) => void
+    ) {
         const ref = doc(
             this.firestore,
             'sejarah',
@@ -211,19 +214,19 @@ export class Repository {
             .then(res => {
                 onSuccess(
                     {
-                        content:res.get('content')
+                        content: res.get('content')
                     }
                 )
             })
-            .catch((err:Error) => {
+            .catch((err: Error) => {
                 onFailed(err)
             })
     }
 
     getGeoDemoDesa(
-        onSuccess:(item:GeoDemoResponse) => void,
-        onFailed:(err:Error) => void
-    ){
+        onSuccess: (item: GeoDemoResponse) => void,
+        onFailed: (err: Error) => void
+    ) {
         const ref = doc(
             this.firestore,
             'geo-demo',
@@ -234,14 +237,14 @@ export class Repository {
             .then(res => {
                 onSuccess(
                     {
-                        geo_url:res.get('geo_url'),
-                        geo_content:res.get('geo_content'),
-                        demo_url:res.get('demo_url'),
-                        demo_content:res.get('demo_content')
+                        geo_url: res.get('geo_url'),
+                        geo_content: res.get('geo_content'),
+                        demo_url: res.get('demo_url'),
+                        demo_content: res.get('demo_content')
                     }
                 )
             })
-            .catch((err:Error) => {
+            .catch((err: Error) => {
                 onFailed(err)
             })
     }
@@ -319,8 +322,16 @@ export class Repository {
             id
         )
 
-        deleteDoc(ref).then(() => {
-            onSuccess()
+        deleteObject(
+            this.homeBannerRef(id)
+        ).then(() => {
+            deleteDoc(
+                ref
+            ).then(() => {
+                onSuccess()
+            })
+        }).catch((err: Error) => {
+            //HANDLE ERROR LATER
         })
     }
 
@@ -368,7 +379,7 @@ export class Repository {
         title: string,
         content: string,
         onSuccess: () => void,
-        onFailed:(err:Error) => void
+        onFailed: (err: Error) => void
     ) {
         const ref = doc(
             this.firestore,
@@ -380,11 +391,11 @@ export class Repository {
             ref,
             {
                 title: title,
-                content:content
+                content: content
             }
         ).then(() => {
             onSuccess()
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
@@ -392,7 +403,7 @@ export class Repository {
     adminDeleteNews(
         id: string,
         onSuccess: () => void,
-        onFailed:(err:Error) => void
+        onFailed: (err: Error) => void
     ) {
         const ref = doc(
             this.firestore,
@@ -400,18 +411,27 @@ export class Repository {
             id
         )
 
-        deleteDoc(ref).then(() => {
-            onSuccess()
-        }).catch((err:Error) => {
+        deleteObject(
+            this.newsThumbnailRef(id)
+        ).then(() => {
+            deleteDoc(
+                ref
+            ).then(() => {
+                onSuccess()
+            }).catch((err: Error) => {
+                onFailed(err)
+            })
+        }).catch((err: Error) => {
             onFailed(err)
         })
+
     }
 
     adminEditTentangDesa(
-        content:string,
+        content: string,
         onSuccess: () => void,
-        onFailed:(err:Error) => void
-    ){
+        onFailed: (err: Error) => void
+    ) {
         const ref = doc(
             this.firestore,
             'tentang',
@@ -421,21 +441,21 @@ export class Repository {
         updateDoc(
             ref,
             {
-                content:content,
-                updated_at:serverTimestamp()
+                content: content,
+                updated_at: serverTimestamp()
             }
         ).then(() => {
             onSuccess()
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
 
     adminEditSejarahDesa(
-        content:string,
+        content: string,
         onSuccess: () => void,
-        onFailed:(err:Error) => void
-    ){
+        onFailed: (err: Error) => void
+    ) {
         const ref = doc(
             this.firestore,
             'sejarah',
@@ -445,24 +465,24 @@ export class Repository {
         updateDoc(
             ref,
             {
-                content:content,
-                updated_at:serverTimestamp()
+                content: content,
+                updated_at: serverTimestamp()
             }
         ).then(() => {
             onSuccess()
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
 
     adminEditGeoDemoDesa(
-        geo_url:string,
-        geo_content:string,
-        demo_url:string,
-        demo_content:string,
+        geo_url: string,
+        geo_content: string,
+        demo_url: string,
+        demo_content: string,
         onSuccess: () => void,
-        onFailed:(err:Error) => void
-    ){
+        onFailed: (err: Error) => void
+    ) {
         const ref = doc(
             this.firestore,
             'geo-demo',
@@ -472,15 +492,70 @@ export class Repository {
         updateDoc(
             ref,
             {
-                geo_url:geo_url,
-                geo_content:geo_content,
-                demo_url:demo_url,
-                demo_content:demo_content,
-                updated_at:serverTimestamp()
+                geo_url: geo_url,
+                geo_content: geo_content,
+                demo_url: demo_url,
+                demo_content: demo_content,
+                updated_at: serverTimestamp()
             }
         ).then(() => {
             onSuccess()
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
+            onFailed(err)
+        })
+    }
+
+    adminAddSopDesa(
+        file: File,
+        title: string,
+        onSuccess: () => void,
+        onFailed: (err: Error) => void
+    ) {
+        const randomized_id = create_UUID()
+        const ref = this.sopPdfRef(randomized_id)
+
+        uploadBytes(ref, file)
+            .then(() => {
+                getDownloadURL(ref)
+                    .then(url => {
+                        addDoc(
+                            collection(this.firestore, 'sop-desa', randomized_id),
+                            {
+                                id: randomized_id,
+                                title: title,
+                                url: url,
+                                created_at: serverTimestamp()
+                            }
+                        ).then(() => {
+                            onSuccess()
+                        }).catch((err: Error) => {
+                            onFailed(err)
+                        })
+                    }).catch((err: Error) => {
+                        onFailed(err)
+                    })
+            })
+            .catch((err: Error) => {
+                onFailed(err)
+            })
+    }
+
+    adminDeleteSopDesa(
+        id: string,
+        onSuccess: () => void,
+        onFailed: (err: Error) => void
+    ) {
+        deleteObject(
+            this.sopPdfRef(id)
+        ).then(() => {
+            deleteDoc(
+                doc(this.firestore, 'sop-desa', id)
+            ).then(() => {
+                onSuccess()
+            }).catch((err: Error) => {
+                onFailed(err)
+            })
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
