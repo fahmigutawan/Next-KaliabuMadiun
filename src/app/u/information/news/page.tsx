@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useContext, useState } from "react"
+import { useEffect, useContext, useState, useRef } from "react"
 import { AppContext } from "@/context/provider";
 import { NewsResponse } from "@/model/response/news/news-response";
 import { toast } from "react-hot-toast";
@@ -32,19 +32,12 @@ const Card: React.FC<CardProps> = ({ data }) => {
 }
 
 export default function NewsPage() {
-    const pathname = usePathname()
+    const pathname = usePathname();
     const repository = useContext(AppContext).repository;
-    const [newsData, setNewsData] = useState<NewsResponse[] | null>([]);
-    const [isBtm, setIsBtm] = useState(false);
-
-    const handleScroll = () => {
-        const isAtBottom = window.scrollY >= document.body.offsetHeight;
-        if (isAtBottom) {
-            setIsBtm(true);
-        }else{
-            setIsBtm(false);
-        }
-    };
+    const [newsData, setNewsData] = useState<NewsResponse[] | null>(null);
+    const [isbtm, setIsbtm] = useState(false);
+    const cardRef = useRef(null);
+    const [idxRef, setIdxRef] = useState(3);
 
     useEffect(() => {
         repository.getFirstPageNews(
@@ -52,44 +45,70 @@ export default function NewsPage() {
                 setNewsData(data);
             },
             (error) => {
-                toast.error(error.message)
+                toast.error(error.message);
             }
         );
     }, []);
 
     useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
-    useEffect(() => {
-        if(isBtm && newsData){
+        if (isbtm && newsData) {
             repository.getNextPageNews(
-                newsData[newsData.length -1].id,
+                newsData[newsData.length - 1].id,
                 (data) => {
-                    // Append the new data to the existing newsData array
                     setNewsData((prevNewsData) => {
                         return prevNewsData ? [...prevNewsData, ...data] : null;
                     });
+                    setIdxRef(newsData.length - 1);
                 },
                 (error) => {
-                    console.error(error)
+                    console.error(error);
                 }
             );
         }
-    },[isBtm])
+    }, [isbtm, newsData]);
+
+    useEffect(() => {
+        if (isbtm) {
+            setIsbtm(false);
+        }
+    }, [isbtm]);
+
+    useEffect(() => {
+        if (newsData) {
+            setIdxRef(newsData.length - 1);
+        }
+    }, [newsData]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && entry.target === cardRef.current) {
+                    setIsbtm(true);
+                }
+            });
+        });
+
+        if (cardRef.current) {
+            observer.observe(cardRef.current);
+        }
+
+        return () => {
+            if (cardRef.current) {
+                observer.unobserve(cardRef.current);
+            }
+        };
+    }, [newsData]);
 
     return (
-        <div className='px-[5.5rem] py-[2.1rem]'>
-            <h2 className='mb-9 text-secondary900 font-bold text-4xl'>Berita</h2>
-            <div className='flex flex-col gap-9'>
-                {newsData?.map(data => (
-                    <Card key={data.id} data={data} />
+        <div className="px-[5.5rem] py-[2.1rem]">
+            <h2 className="mb-9 text-secondary900 font-bold text-4xl">Berita</h2>
+            <div className="flex flex-col gap-9">
+                {newsData?.map((data, index) => (
+                    <div key={data.id} ref={index === idxRef ? cardRef : null} className={`${index == idxRef && "bg-red-500"}`}>
+                        <Card data={data} />
+                    </div>
                 ))}
             </div>
         </div>
     );
-};
+}
