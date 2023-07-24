@@ -288,6 +288,51 @@ export class Repository {
             })
     }
 
+    async adminUpdateNews(
+        id: string,
+        title: string,
+        content: string,
+        onSuccess: () => void,
+        onFailed:(err:Error) => void
+    ) {
+        const ref = doc(
+            this.firestore,
+            'news',
+            id
+        )
+
+        await updateDoc(
+            ref,
+            {
+                title: title,
+                content:content
+            }
+        ).then(() => {
+            onSuccess()
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+    async adminDeleteNews(
+        id: string,
+        onSuccess: () => void,
+        onFailed:(err:Error) => void
+    ) {
+        const ref = doc(
+            this.firestore,
+            'news',
+            id
+        )
+
+        await deleteDoc(ref).then(() => {
+            onSuccess()
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+
     async adminLogin(
         email: string,
         password: string
