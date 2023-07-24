@@ -5,7 +5,8 @@ import { useEffect, useContext, useState, useRef } from "react"
 import { AppContext } from "@/context/provider";
 import { NewsResponse } from "@/model/response/news/news-response";
 import { toast } from "react-hot-toast";
-import Image from 'next/image';
+import { AiFillHome } from "react-icons/ai"
+import Breadcrumb from '@/component/base/Breadcrumb';
 
 interface CardProps {
     data: {
@@ -30,7 +31,6 @@ const Card: React.FC<CardProps> = ({ data }) => {
         </div>
     )
 }
-
 
 export default function NewsPage() {
     const pathname = usePathname();
@@ -102,6 +102,7 @@ export default function NewsPage() {
 
     return (
         <div className="px-[5.5rem] py-[2.1rem]">
+            <Breadcrumb page={["Informasi", "Berita"]}/>
             <h2 className="mb-9 text-secondary900 font-bold text-4xl">Berita</h2>
             <div className="flex flex-col gap-9">
                 {newsData?.map((data, index) => (

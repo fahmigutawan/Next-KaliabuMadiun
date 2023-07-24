@@ -1,8 +1,11 @@
 'use client'
 
+import Breadcrumb from "@/component/base/Breadcrumb"
+
 const NewsDetailPage = () => {
   return (
     <div className="px-[5.5rem] py-[2rem]">
+      <Breadcrumb page={["Informasi", "Berita", "Nama Berita"]}/>
       <h2 className="text-secondary900 text-4xl font-bold mb-[53px]">Berita 1</h2>
       <div className="w-full flex items-center justify-center mb-[4rem]">
         <div className="bg-gray-400 w-[37.5rem] h-[17.7rem] text-center"></div>
