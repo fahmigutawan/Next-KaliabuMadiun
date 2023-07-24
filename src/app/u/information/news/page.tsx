@@ -31,84 +31,85 @@ const Card: React.FC<CardProps> = ({ data }) => {
     )
 }
 
+
 export default function NewsPage() {
     const pathname = usePathname();
     const repository = useContext(AppContext).repository;
     const [newsData, setNewsData] = useState<NewsResponse[] | null>(null);
-    const [isbtm, setIsbtm] = useState(false);
-    const cardRef = useRef(null);
-    const [idxRef, setIdxRef] = useState(3);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [noData, setNoData] = useState(false);
+
+    const loadMoreData = () => {
+        if (!loading && !noData) {
+            setLoading(true);
+            if (newsData) {
+                repository.getNextPageNews(
+                    newsData[newsData.length - 1].id,
+                    (data) => {
+                        if (data.length === 0) {
+                            setNoData(true);
+                        } else {
+                            setNewsData((prevNewsData) => {
+                                return prevNewsData ? [...prevNewsData, ...data] : null;
+                            });
+                        }
+                        setLoading(false);
+                    },
+                    (error) => {
+                        console.error(error);
+                        setLoading(false);
+                    }
+                );
+            } else {
+                repository.getFirstPageNews(
+                    (data) => {
+                        if (data.length === 0) {
+                            setNoData(true);
+                        } else {
+                            setNewsData(data);
+                        }
+                        setLoading(false);
+                    },
+                    (error) => {
+                        toast.error(error.message);
+                        setLoading(false);
+                    }
+                );
+            }
+        }
+    };
 
     useEffect(() => {
-        repository.getFirstPageNews(
-            (data) => {
-                setNewsData(data);
-            },
-            (error) => {
-                toast.error(error.message);
-            }
-        );
+        loadMoreData(); 
     }, []);
 
     useEffect(() => {
-        if (isbtm && newsData) {
-            repository.getNextPageNews(
-                newsData[newsData.length - 1].id,
-                (data) => {
-                    setNewsData((prevNewsData) => {
-                        return prevNewsData ? [...prevNewsData, ...data] : null;
-                    });
-                    setIdxRef(newsData.length - 1);
-                },
-                (error) => {
-                    console.error(error);
-                }
-            );
-        }
-    }, [isbtm, newsData]);
-
-    useEffect(() => {
-        if (isbtm) {
-            setIsbtm(false);
-        }
-    }, [isbtm]);
-
-    useEffect(() => {
-        if (newsData) {
-            setIdxRef(newsData.length - 1);
-        }
-    }, [newsData]);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting && entry.target === cardRef.current) {
-                    setIsbtm(true);
-                }
-            });
-        });
-
-        if (cardRef.current) {
-            observer.observe(cardRef.current);
-        }
-
+        window.addEventListener('scroll', handleScroll);
         return () => {
-            if (cardRef.current) {
-                observer.unobserve(cardRef.current);
-            }
+            window.removeEventListener('scroll', handleScroll);
         };
-    }, [newsData]);
+    }, [newsData, loading, noData]);
+
+    const handleScroll = () => {
+        const isBottom =
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight;
+        if (isBottom) {
+            loadMoreData();
+        }
+    };
 
     return (
         <div className="px-[5.5rem] py-[2.1rem]">
             <h2 className="mb-9 text-secondary900 font-bold text-4xl">Berita</h2>
             <div className="flex flex-col gap-9">
                 {newsData?.map((data, index) => (
-                    <div key={data.id} ref={index === idxRef ? cardRef : null} className={`${index == idxRef && "bg-red-500"}`}>
-                        <Card data={data} />
-                    </div>
+                    <Card data={data} key={data.id} />
                 ))}
             </div>
+            {loading && <div className="text-center">loading data ...</div>}
+            {noData && <div className="text-center">no data anymore ...</div>}
         </div>
     );
 }
