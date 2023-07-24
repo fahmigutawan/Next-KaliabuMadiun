@@ -26,6 +26,9 @@ import {toast} from 'react-hot-toast'
 import {randomUUID} from "crypto";
 import {BannerResponse} from "@/model/response/home-banner/banner-response";
 import {NewsResponse} from "@/model/response/news/news-response";
+import {TentangResponse} from "@/model/response/tentang/tentang-response";
+import {SejarahResponse} from "@/model/response/sejarah/sejarah-response";
+import {GeoDemoResponse} from "@/model/response/geo-demo/geo-demo-response";
 
 
 const fbApp = initializeApp(
@@ -169,6 +172,78 @@ export class Repository {
         }).catch((err: Error) => {
             onFailed(err)
         })
+    }
+
+    getTentangDesa(
+        onSuccess:(item:TentangResponse) => void,
+        onFailed:(err:Error) => void
+    ){
+        const ref = doc(
+            this.firestore,
+            'tentang',
+            'item'
+        )
+
+        getDoc(ref)
+            .then(res => {
+                onSuccess(
+                    {
+                        content:res.get('content')
+                    }
+                )
+            })
+            .catch((err:Error) => {
+                onFailed(err)
+            })
+    }
+
+    getSejarahDesa(
+        onSuccess:(item:SejarahResponse) => void,
+        onFailed:(err:Error) => void
+    ){
+        const ref = doc(
+            this.firestore,
+            'sejarah',
+            'item'
+        )
+
+        getDoc(ref)
+            .then(res => {
+                onSuccess(
+                    {
+                        content:res.get('content')
+                    }
+                )
+            })
+            .catch((err:Error) => {
+                onFailed(err)
+            })
+    }
+
+    getGeoDemoDesa(
+        onSuccess:(item:GeoDemoResponse) => void,
+        onFailed:(err:Error) => void
+    ){
+        const ref = doc(
+            this.firestore,
+            'geo-demo',
+            'item'
+        )
+
+        getDoc(ref)
+            .then(res => {
+                onSuccess(
+                    {
+                        geo_url:res.get('geo_url'),
+                        geo_content:res.get('geo_content'),
+                        demo_url:res.get('demo_url'),
+                        demo_content:res.get('demo_content')
+                    }
+                )
+            })
+            .catch((err:Error) => {
+                onFailed(err)
+            })
     }
 
     /**ADMIN API*/
@@ -333,7 +408,9 @@ export class Repository {
     }
 
     adminEditTentangDesa(
-        content:string
+        content:string,
+        onSuccess: () => void,
+        onFailed:(err:Error) => void
     ){
         const ref = doc(
             this.firestore,
@@ -347,11 +424,17 @@ export class Repository {
                 content:content,
                 updated_at:serverTimestamp()
             }
-        )
+        ).then(() => {
+            onSuccess()
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
     }
 
     adminEditSejarahDesa(
-        content:string
+        content:string,
+        onSuccess: () => void,
+        onFailed:(err:Error) => void
     ){
         const ref = doc(
             this.firestore,
@@ -365,7 +448,41 @@ export class Repository {
                 content:content,
                 updated_at:serverTimestamp()
             }
+        ).then(() => {
+            onSuccess()
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+    adminEditGeoDemoDesa(
+        geo_url:string,
+        geo_content:string,
+        demo_url:string,
+        demo_content:string,
+        onSuccess: () => void,
+        onFailed:(err:Error) => void
+    ){
+        const ref = doc(
+            this.firestore,
+            'geo-demo',
+            'item'
         )
+
+        updateDoc(
+            ref,
+            {
+                geo_url:geo_url,
+                geo_content:geo_content,
+                demo_url:demo_url,
+                demo_content:demo_content,
+                updated_at:serverTimestamp()
+            }
+        ).then(() => {
+            onSuccess()
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
     }
 
 
