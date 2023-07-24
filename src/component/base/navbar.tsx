@@ -5,9 +5,15 @@ import { Typography } from "@mui/material"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+type SubmenuItem = {
+    word: string,
+    route: string,
+}
+
 type NavbarItem = {
     word: string,
-    route: string
+    route?: string,
+    submenu?: SubmenuItem[],
 }
 
 export const Navbar = () => {
@@ -19,15 +25,46 @@ export const Navbar = () => {
         },
         {
             word: 'PROFIL',
-            route: Routes.ProfilePage
+            submenu: [
+                {
+                    word: 'Tentang',
+                    route: "/u/profile/about",
+                },
+                {
+                    word: 'Sejarah',
+                    route: Routes.ProfilePage,
+                },
+                {
+                    word: 'Geografis',
+                    route: Routes.ProfilePage,
+                },
+            ]
         },
         {
             word: 'PEMERINTAHAN',
-            route: Routes.GovermentPage
+            submenu: [
+                {
+                    word: 'Struktur Organisasi',
+                    route: "/u/profile/about",
+                },
+                {
+                    word: 'Lembaga Desa',
+                    route: Routes.ProfilePage,
+                }
+            ]
         },
         {
             word: 'INFORMASI',
-            route: Routes.InformationPage
+            submenu: [
+                {
+                    word: 'Organisasi',
+                    route: "/u/profile/about",
+                },
+                {
+                    word: 'Lembaga Desa',
+                    route: Routes.ProfilePage,
+                }
+            ]
         },
         {
             word: 'LAYANAN',
@@ -40,8 +77,8 @@ export const Navbar = () => {
     ]
 
     return (
-        <div className='w-full h-[120px] px-[48px] bg-white flex items-center justify-between shadow-sm'>
-            <Link href={Routes.HomePage} className='flex items-center space-x-[16px]'>
+        <div className="flex w-full bg-white justify-between z-30 px-5 ">
+            <Link href={Routes.HomePage} className='flex items-center space-x-[16px] py-4'>
                 <img src='/images/kab_madiun.png' alt="" className='w-[70px]' />
                 <div>
                     <p
@@ -52,17 +89,32 @@ export const Navbar = () => {
                     >Kabupaten Madiun</p>
                 </div>
             </Link>
-            <div className='flex items-center space-x-[16px]'>
-                {
-                    navbarItems.map(item => {
-                        return (
-                            <Link key={item.word} href={item.route}>
-                                <p className={`${(item.route == pathname) ? 'text-primary500 font-extrabold': 'text-black'} text-[14px]`}>{item.word}</p>
+            <div className='flex text-black font-semibold items-center'>
+                {navbarItems.map((item) => (
+                    <div
+                        className={`relative group/nav hover:bg-gray-100 text-sm`}
+                        key={item.word}
+                    >
+                        {item.route ?
+                            <Link href={item.route}>
+                                <h3 className={`px-4 ${item.submenu && 'cursor-default'} h-full py-5 2xl:py-7`}>{item.word}</h3>
                             </Link>
-                        )
-                    })
-                }
+                            :
+                            <h3 className={`px-4 ${item.submenu && 'cursor-default'} h-full py-5 2xl:py-7`}>{item.word}</h3>}
+                        {item.submenu &&
+                            <div className="hidden group-hover/nav:block absolute bg-gray-100 top-[60ypx] w-[140px] z-50 border-[1px]">
+                                {item.submenu.map((item) => (
+                                    <Link href={item.route} key={item.word}>
+                                        <div className='px-[10px] py-4 w-max group/dropdown'>
+                                            <h4 className='z-30 text-sm'>{item.word}</h4>
+                                            <div className='h-[1px] bg-black w-0 group-hover/dropdown:w-full'></div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>}
+                    </div>
+                ))}
             </div>
-        </div >
+        </div>
     )
 }
