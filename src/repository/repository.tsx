@@ -143,7 +143,7 @@ export class Repository {
         getDoc(
             doc(this.firestore, 'news', last_id)
         ).then(res => {
-            const last_created_at = res['created_at']
+            const last_created_at = res.get("created_at")
 
             getDocs(
                 query(
