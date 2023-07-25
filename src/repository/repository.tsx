@@ -249,6 +249,33 @@ export class Repository {
             })
     }
 
+    getNewsById(
+        id: string,
+        onSuccess: (data: NewsResponse) => void,
+        onFailed: (err: Error) => void
+    ) {
+        const ref = doc(
+            this.firestore,
+            'news',
+            id
+        )
+
+        getDoc(ref)
+            .then(res => {
+                onSuccess(
+                    {
+                        id:res.get('id'),
+                        title:res.get('title'),
+                        content:res.get('content'),
+                        thumbnail:res.get('thumbnail')
+                    }
+                )
+            })
+            .catch((err: Error) => {
+                onFailed(err)
+            })
+    }
+
     /**ADMIN API*/
     adminAddHomeBanner(image: File, link: string, title: string, description: string, onSuccess: () => void) {
         toast.loading("Sedang mengunggah...")
@@ -575,5 +602,4 @@ export class Repository {
     adminIsLogin() {
         return this.auth.currentUser != null
     }
-
 }
