@@ -1,7 +1,33 @@
 'use client'
 import Breadcrumb from "@/component/base/Breadcrumb"
+import { useContext, useState, useEffect } from "react"
+import { AppContext } from "@/context/provider"
+import { toast } from "react-hot-toast"
+import Loading from "@/component/base/Loading"
+import { TentangResponse } from "@/model/response/tentang/tentang-response"
 
 const AboutPage = () => {
+    const repository = useContext(AppContext).repository;
+    const [datas, setDatas] = useState<TentangResponse | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        setIsLoading(true)
+        repository.getTentangDesa(
+            (data) => {
+                setDatas(data)
+                setIsLoading(false)
+            },
+            (error) => {
+                toast.error(error.message);
+                setIsLoading(false)
+            }
+        );
+    }, [])
+
+    if (isLoading) {
+        return <Loading />
+    }
   return (
     <div className="px-[5.5rem] py-[2rem]">
       <Breadcrumb page={["Profil", "Tentang"]}/>
@@ -9,10 +35,7 @@ const AboutPage = () => {
       <div className="w-full flex items-center justify-center mb-[4rem]">
         <div className="bg-gray-400 w-[37.5rem] h-[17.7rem] text-center"></div>
       </div>
-      <p className="whitespace-pre-line">{`
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur faucibus ipsum orci, eget volutpat nulla porta at. Ut sit amet erat nec massa ornare sagittis. Mauris pulvinar velit quis vulputate ornare. Vivamus et dolor nec nisi convallis dapibus quis ut nunc. Fusce eget nulla fermentum, pellentesque nisi nec, maximus lorem. Duis eget dui maximus, congue diam ut, vulputate urna. Donec mollis risus nec metus fringilla, non pellentesque urna feugiat. Sed rutrum tincidunt sem, semper tempor ante luctus quis. Mauris feugiat venenatis velit, et blandit lorem maximus facilisis.
-
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur faucibus ipsum orci, eget volutpat nulla porta at. Ut sit amet erat nec massa ornare sagittis. Mauris pulvinar velit quis vulputate ornare. Vivamus et dolor nec nisi convallis dapibus quis ut nunc. Fusce eget nulla fermentum, pellentesque nisi nec, maximus lorem. Duis eget dui maximus, congue diam ut, vulputate urna. Donec mollis risus nec metus fringilla, non pellentesque urna feugiat. Sed rutrum tincidunt sem, semper tempor ante luctus quis. Mauris feugiat venenatis velit, et blandit lorem maximus facilisis.`}</p>
+      <p className="whitespace-pre-line">{`${datas?.content}`}</p>
     </div>
   )
 }

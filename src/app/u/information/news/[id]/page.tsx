@@ -6,13 +6,14 @@ import { useContext, useState, useEffect } from "react"
 import { AppContext } from "@/context/provider"
 import { NewsResponse } from "@/model/response/news/news-response"
 import { toast } from "react-hot-toast"
+import Loading from "@/component/base/Loading"
 
 const NewsDetailPage = () => {
+  const params = useParams();
+  const id = params.id;
   const repository = useContext(AppContext).repository;
   const [newsData, setNewsData] = useState<NewsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const params = useParams();
-  const id = params.id;
 
   useEffect(() => {
     setIsLoading(true)
@@ -30,11 +31,7 @@ const NewsDetailPage = () => {
   },[])
 
   if(isLoading){
-    return (
-        <div className="w-full h-screen flex items-center justify-center text-2xl font-bold text-secondary800">
-          Loading . . .
-        </div>
-      )
+    return <Loading />
   }
 
   
