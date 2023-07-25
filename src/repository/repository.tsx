@@ -1,4 +1,4 @@
-import { initializeApp } from "@firebase/app";
+import {initializeApp} from "@firebase/app";
 import {
     getAuth,
     RecaptchaVerifier,
@@ -7,7 +7,7 @@ import {
     signInWithPhoneNumber,
     signInWithEmailAndPassword
 } from 'firebase/auth'
-import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
+import {deleteObject, getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage'
 import {
     addDoc,
     collection,
@@ -22,13 +22,14 @@ import {
     updateDoc
 } from 'firebase/firestore'
 import imageCompression from 'browser-image-compression';
-import { toast } from 'react-hot-toast'
-import { randomUUID } from "crypto";
-import { BannerResponse } from "@/model/response/home-banner/banner-response";
-import { NewsResponse } from "@/model/response/news/news-response";
-import { TentangResponse } from "@/model/response/tentang/tentang-response";
-import { SejarahResponse } from "@/model/response/sejarah/sejarah-response";
-import { GeoDemoResponse } from "@/model/response/geo-demo/geo-demo-response";
+import {toast} from 'react-hot-toast'
+import {randomUUID} from "crypto";
+import {BannerResponse} from "@/model/response/home-banner/banner-response";
+import {NewsResponse} from "@/model/response/news/news-response";
+import {TentangResponse} from "@/model/response/tentang/tentang-response";
+import {SejarahResponse} from "@/model/response/sejarah/sejarah-response";
+import {GeoDemoResponse} from "@/model/response/geo-demo/geo-demo-response";
+import {GalleryResponse} from "@/model/response/gallery/gallery-response";
 
 
 const fbApp = initializeApp(
@@ -66,9 +67,8 @@ export class Repository {
     private sopPdfRef = (filename: string) => {
         return ref(this.storage, `sop-desa/${filename}.pdf`)
     }
-
-    async signInWithGoogle() {
-        return await signInWithPopup(this.auth, new GoogleAuthProvider())
+    private galleryItemRef = (filename: string) => {
+        return ref(this.storage, `gallery/${filename}.jpg`)
     }
 
     /**USERS API*/
@@ -80,16 +80,16 @@ export class Repository {
                     orderBy('created_at', 'desc')
                 )
             )).docs.map(res => {
-                const s: BannerResponse = {
-                    id: res.data()['id'],
-                    img_url: res.data()['url'],
-                    link: res.data()['link'],
-                    title: res.data()['title'],
-                    description: res.data()['description']
-                }
+            const s: BannerResponse = {
+                id: res.data()['id'],
+                img_url: res.data()['url'],
+                link: res.data()['link'],
+                title: res.data()['title'],
+                description: res.data()['description']
+            }
 
-                return s
-            })
+            return s
+        })
     }
 
     async getLast3News(): Promise<NewsResponse[]> {
@@ -264,16 +264,84 @@ export class Repository {
             .then(res => {
                 onSuccess(
                     {
-                        id:res.get('id'),
-                        title:res.get('title'),
-                        content:res.get('content'),
-                        thumbnail:res.get('thumbnail')
+                        id: res.get('id'),
+                        title: res.get('title'),
+                        content: res.get('content'),
+                        thumbnail: res.get('thumbnail')
                     }
                 )
             })
             .catch((err: Error) => {
                 onFailed(err)
             })
+    }
+
+    getFirstGalleryPage(
+        onSuccess: (item: GalleryResponse[]) => void,
+        onFailed: (err: Error) => void
+    ) {
+        getDocs(
+            query(
+                collection(this.firestore, 'gallery'),
+                orderBy('created_at', 'desc'),
+                limit(10)
+            )
+        ).then(res => {
+            onSuccess(
+                res.docs.map(res2 => {
+                    const s: GalleryResponse = {
+                        id: res2.data()['id'],
+                        url: res2.data()['url'],
+                        description: res2.data()['description'],
+                        taken_at: res2.data()['taken_at']
+                    }
+
+                    return s
+                })
+            )
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+    getNextGalleryPage(
+        lastId:string,
+        onSuccess: (item: GalleryResponse[]) => void,
+        onFailed: (err: Error) => void
+    ) {
+        getDoc(
+            doc(
+                this.firestore,
+                'gallery',
+                lastId
+            )
+        ).then(s => {
+            getDocs(
+                query(
+                    collection(this.firestore, 'gallery'),
+                    orderBy('created_at', 'desc'),
+                    startAfter(s.get('created_at')),
+                    limit(10)
+                )
+            ).then(res => {
+                onSuccess(
+                    res.docs.map(res2 => {
+                        const s: GalleryResponse = {
+                            id: res2.data()['id'],
+                            url: res2.data()['url'],
+                            description: res2.data()['description'],
+                            taken_at: res2.data()['taken_at']
+                        }
+
+                        return s
+                    })
+                )
+            }).catch((err:Error) => {
+                onFailed(err)
+            })
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
     }
 
     /**ADMIN API*/
@@ -559,8 +627,8 @@ export class Repository {
                             onFailed(err)
                         })
                     }).catch((err: Error) => {
-                        onFailed(err)
-                    })
+                    onFailed(err)
+                })
             })
             .catch((err: Error) => {
                 onFailed(err)
@@ -601,5 +669,86 @@ export class Repository {
 
     adminIsLogin() {
         return this.auth.currentUser != null
+    }
+
+    adminAddGalleryItem(
+        file: File,
+        content: string,
+        taken_at: string,
+        onSuccess: () => void,
+        onFailed: (err: Error) => void
+    ) {
+        const randomized_id = create_UUID()
+
+        const options = {
+            maxSizeMB: 1.5,
+            maxWidthOrHeight: 1024,
+        }
+
+        imageCompression(file, options)
+            .then(compressed => {
+                const randomizedUID = create_UUID()
+                const ref = doc(
+                    this.firestore,
+                    'gallery',
+                    randomizedUID
+                )
+
+                uploadBytes(
+                    this.galleryItemRef(randomized_id),
+                    compressed
+                ).then(r => {
+                    getDownloadURL(
+                        this.galleryItemRef(randomized_id)
+                    ).then(url => {
+                        setDoc(
+                            ref,
+                            {
+                                id: randomized_id,
+                                url: url,
+                                description: content,
+                                taken_at: taken_at,
+                                created_at: serverTimestamp()
+                            }
+                        ).then(() => {
+                            onSuccess()
+                        }).catch((err: Error) => {
+                            onFailed(err)
+                        })
+                    }).catch((err: Error) => {
+                        onFailed(err)
+                    })
+                }).catch((err: Error) => {
+                    onFailed(err)
+                })
+            })
+            .catch((err: Error) => {
+                onFailed(err)
+            })
+    }
+
+    adminDeleteGalleryItem(
+        id: string,
+        onSuccess: () => void,
+        onFailed: (err: Error) => void
+    ) {
+        const docRef = doc(
+            this.firestore,
+            'gallery',
+            id
+        )
+        deleteObject(
+            this.galleryItemRef(id)
+        ).then(() => {
+            deleteDoc(
+                docRef
+            ).then(() => {
+                onSuccess()
+            }).catch((err: Error) => {
+                onFailed(err)
+            })
+        }).catch((err: Error) => {
+            onFailed(err)
+        })
     }
 }

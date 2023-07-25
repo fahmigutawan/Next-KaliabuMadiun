@@ -13,7 +13,7 @@ const SOPPenyuratanPage = () => {
                     <p className='flex-1 px-6'>Perihal</p>
                 </div>
                 {[1, 2, 3, 4, 5].map(data => (
-                    <div className='flex flex-row w-full py-4 text-secondary800'>
+                    <div key={data} className='flex flex-row w-full py-4 text-secondary800'>
                         <p className='w-[184px] px-6'>{data}</p>
                         <p className='flex-1 px-6'>Lorem ipsum</p>
                         <Link href={"https://www.youtube.com/"} target='_blank' className='px-6 text-secondary700 hover:text-blue-400'>Lihat</Link>
