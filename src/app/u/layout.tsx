@@ -42,6 +42,8 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             setShowNavbar(true)
         }else if(pathname.startsWith(Routes.ProfilePage)){
             setShowNavbar(true)
+        }else if(pathname.startsWith(Routes.UserPage)){
+            setShowNavbar(true)
         }
         
     }, [pathname])
