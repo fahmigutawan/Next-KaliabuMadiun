@@ -1,19 +1,53 @@
 'use client'
 
 import Breadcrumb from "@/component/base/Breadcrumb"
+import { useParams } from "next/navigation"
+import { useContext, useState, useEffect } from "react"
+import { AppContext } from "@/context/provider"
+import { NewsResponse } from "@/model/response/news/news-response"
+import { toast } from "react-hot-toast"
 
 const NewsDetailPage = () => {
+  const repository = useContext(AppContext).repository;
+  const [newsData, setNewsData] = useState<NewsResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const params = useParams();
+  const id = params.id;
+
+  useEffect(() => {
+    setIsLoading(true)
+    repository.getNewsById(
+      id,
+      (data) => {
+          setNewsData(data)
+          setIsLoading(false)
+      },
+      (error) => {
+          toast.error(error.message);
+          setIsLoading(false)
+      }
+  );
+  },[])
+
+  if(isLoading){
+    return (
+        <div className="w-full h-screen flex items-center justify-center text-2xl font-bold text-secondary800">
+          Loading . . .
+        </div>
+      )
+  }
+
+  
   return (
     <div className="px-[5.5rem] py-[2rem]">
       <Breadcrumb page={["Informasi", "Berita", "Nama Berita"]}/>
-      <h2 className="text-secondary900 text-4xl font-bold mb-[53px]">Berita 1</h2>
+      <h2 className="text-secondary900 text-4xl font-bold mb-[53px]">{newsData?.title}</h2>
       <div className="w-full flex items-center justify-center mb-[4rem]">
-        <div className="bg-gray-400 w-[37.5rem] h-[17.7rem] text-center"></div>
+        <div className="bg-gray-400 w-[37.5rem] text-center">
+          <img src={newsData?.thumbnail} alt="" className="w-full"/>
+        </div>
       </div>
-      <p className="whitespace-pre-line">{`
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur faucibus ipsum orci, eget volutpat nulla porta at. Ut sit amet erat nec massa ornare sagittis. Mauris pulvinar velit quis vulputate ornare. Vivamus et dolor nec nisi convallis dapibus quis ut nunc. Fusce eget nulla fermentum, pellentesque nisi nec, maximus lorem. Duis eget dui maximus, congue diam ut, vulputate urna. Donec mollis risus nec metus fringilla, non pellentesque urna feugiat. Sed rutrum tincidunt sem, semper tempor ante luctus quis. Mauris feugiat venenatis velit, et blandit lorem maximus facilisis.
-
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur faucibus ipsum orci, eget volutpat nulla porta at. Ut sit amet erat nec massa ornare sagittis. Mauris pulvinar velit quis vulputate ornare. Vivamus et dolor nec nisi convallis dapibus quis ut nunc. Fusce eget nulla fermentum, pellentesque nisi nec, maximus lorem. Duis eget dui maximus, congue diam ut, vulputate urna. Donec mollis risus nec metus fringilla, non pellentesque urna feugiat. Sed rutrum tincidunt sem, semper tempor ante luctus quis. Mauris feugiat venenatis velit, et blandit lorem maximus facilisis.`}</p>
+      <p className="whitespace-pre-line">{`${newsData?.content}`}</p>
     </div>
   )
 }
