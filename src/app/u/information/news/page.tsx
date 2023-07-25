@@ -20,7 +20,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ data }) => {
     return (
         <div className='flex flex-row gap-5'>
-            <Link href={"/u/information/news/berita1"} className='relative bg-gray-400 w-[408px] h-[212px]'>
+            <Link href={`/u/information/news/${data.id}`} className='relative bg-gray-400 w-[408px] h-[212px]'>
                 <img className='w-full h-full bg-slate-600 object-cover' alt={data.title} src={data.thumbnail} />
                 <div className='absolute bottom-0 right-0 bg-secondary800 w-[194px] h-[46px]'></div>
             </Link>
