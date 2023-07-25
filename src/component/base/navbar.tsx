@@ -35,6 +35,10 @@ export const Navbar = () => {
                     route: "/u/profile/history",
                 },
                 {
+                    word: 'Visi dan Misi',
+                    route: "/u/profile/visi-misi"
+                },
+                {
                     word: 'Geografis & Demografis',
                     route: "/u/profile/geografis-demografi",
                 },
@@ -57,18 +61,27 @@ export const Navbar = () => {
             word: 'INFORMASI',
             submenu: [
                 {
-                    word: 'Organisasi',
-                    route: "/u/profile/about",
+                    word: 'Berita',
+                    route: "/u/information/news",
                 },
                 {
-                    word: 'Lembaga Desa',
-                    route: Routes.ProfilePage,
+                    word: 'Galeri',
+                    route: "",
                 }
             ]
         },
         {
             word: 'LAYANAN',
-            route: Routes.ServicesPage
+            submenu: [
+                {
+                    word: 'SOP Penyuratan',
+                    route: "/u/information/document",
+                },
+                {
+                    word: 'Keritik dan Saran',
+                    route: "",
+                }
+            ]
         },
         {
             word: 'PRODUK UNGGULAN',
@@ -102,10 +115,10 @@ export const Navbar = () => {
                             :
                             <h3 className={`px-4 ${item.submenu && 'cursor-default'} h-full py-5 2xl:py-7`}>{item.word}</h3>}
                         {item.submenu &&
-                            <div className="hidden group-hover/nav:block absolute bg-gray-100 z-50 border-[1px]">
+                            <div className="hidden group-hover/nav:block absolute bg-gray-100 min-w-[100px] z-50 border-[1px]">
                                 {item.submenu.map((item) => (
-                                    <Link href={item.route} key={item.word}>
-                                        <div className='px-[10px] py-4 w-max group/dropdown'>
+                                    <Link href={item.route} key={item.word} className="group/dropdown">
+                                        <div className='px-[10px] py-4 w-max'>
                                             <h4 className='z-30 text-sm'>{item.word}</h4>
                                             <div className='h-[1px] bg-black w-0 group-hover/dropdown:w-full'></div>
                                         </div>
