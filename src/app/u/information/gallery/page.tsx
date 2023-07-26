@@ -108,7 +108,7 @@ export default function GalleryPage() {
             <div className="grid grid-cols-4 gap-5">
                 {galleryData?.map((data, index) => (
                     <div className='h-[200px] flex flex-col'>
-                        <div className='flex-1 bg-secondary300 w-full bg-cover' style={{backgroundImage: `url(${data.url})`}}>
+                        <div className='flex-1 bg-secondary300 w-full bg-cover bg-center' style={{backgroundImage: `url(${data.url})`}}>
                         </div>
                         <div className='w-full py-4 bg-secondary800 font-semibold text-white flex items-center justify-center'>{data.description}</div>
                     </div>
