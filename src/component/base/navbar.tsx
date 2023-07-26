@@ -66,7 +66,7 @@ export const Navbar = () => {
                 },
                 {
                     word: 'Galeri',
-                    route: "",
+                    route: "/u/information/gallery",
                 }
             ]
         },
@@ -75,7 +75,7 @@ export const Navbar = () => {
             submenu: [
                 {
                     word: 'SOP Penyuratan',
-                    route: "/u/information/document",
+                    route: "/u/layanan/document",
                 },
                 {
                     word: 'Keritik dan Saran',
