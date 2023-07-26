@@ -41,7 +41,7 @@ export default function GalleryPage() {
 
     const loadMoreData = () => {
         if (!loading && !noData) {
-            if (galleryData && galleryData.length % 10 === 0) {
+            if (galleryData && galleryData.length % 8 === 0) {
                 setLoading(true);
                 repository.getNextGalleryPage(
                     galleryData[galleryData.length - 1].id,

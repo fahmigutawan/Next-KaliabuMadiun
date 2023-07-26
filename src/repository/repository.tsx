@@ -312,7 +312,7 @@ export class Repository {
             query(
                 collection(this.firestore, 'gallery'),
                 orderBy('created_at', 'desc'),
-                limit(10)
+                limit(8)
             )
         ).then(res => {
             onSuccess(
@@ -351,7 +351,7 @@ export class Repository {
                     collection(this.firestore, 'gallery'),
                     orderBy('created_at', 'desc'),
                     startAfter(last_created_at),
-                    limit(10)
+                    limit(8)
                 )
             ).then(res => {
                 onSuccess(
