@@ -41,12 +41,11 @@ export default function GalleryPage() {
 
     const loadMoreData = () => {
         if (!loading && !noData) {
-            setLoading(true);
-            if (galleryData) {
+            if (galleryData && galleryData.length % 10 === 0) {
+                setLoading(true);
                 repository.getNextGalleryPage(
                     galleryData[galleryData.length - 1].id,
                     (data) => {
-                        console.log(data)
                         if (data.length === 0) {
                             setNoData(true);
                         } else {
@@ -61,28 +60,27 @@ export default function GalleryPage() {
                         setLoading(false);
                     }
                 );
-            } else {
-                repository.getFirstGalleryPage(
-                    (data) => {
-                        console.log(data)
-                        if (data.length === 0) {
-                            setNoData(true);
-                        } else {
-                            setGalleryData(data);
-                        }
-                        setLoading(false);
-                    },
-                    (error) => {
-                        toast.error(error.message);
-                        setLoading(false);
-                    }
-                );
+            } else{
+                setNoData(true)
             }
         }
     };
 
     useEffect(() => {
-        loadMoreData(); 
+        repository.getFirstGalleryPage(
+            (data) => {
+                if (data.length === 0) {
+                    setNoData(true);
+                } else {
+                    setGalleryData(data);
+                }
+                setLoading(false);
+            },
+            (error) => {
+                toast.error(error.message);
+                setLoading(false);
+            }
+        );
     }, []);
 
     useEffect(() => {
