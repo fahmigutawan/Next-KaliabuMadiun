@@ -344,11 +344,13 @@ export class Repository {
                 lastId
             )
         ).then(s => {
+            const last_created_at = res.get("created_at")
+
             getDocs(
                 query(
                     collection(this.firestore, 'gallery'),
                     orderBy('created_at', 'desc'),
-                    startAfter(s.get('created_at')),
+                    startAfter(last_created_at),
                     limit(10)
                 )
             ).then(res => {
