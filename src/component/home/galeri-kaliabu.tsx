@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { GoFileMedia } from 'react-icons/go'
 
 export const GaleriKaliabu = () => {
@@ -10,11 +11,10 @@ export const GaleriKaliabu = () => {
                     <GoFileMedia color='#000000' className='w-[32px] h-[32px]' />
                     <p className='text-[24px] text-black font-bold'>Galeri Kaliabu</p>
                 </div>
-                <button
-                    onClick={() => {
-                    }}
+                <Link
+                href={"/u/information/gallery"}
                     className='bg-transparent border border-black px-[8px] rounded hover:bg-slate-100'
-                >Lihat Lainnya</button>
+                >Lihat Lainnya</Link>
             </div>
             {/*ITEM TOP */}
             <div className='w-full aspect-[16/5] bg-slate-600'/>

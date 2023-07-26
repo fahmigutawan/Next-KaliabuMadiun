@@ -3,10 +3,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useContext, useState, useRef } from "react"
 import { AppContext } from "@/context/provider";
-import { NewsResponse } from "@/model/response/news/news-response";
 import { toast } from "react-hot-toast";
-import { AiFillHome } from "react-icons/ai"
 import Breadcrumb from '@/component/base/Breadcrumb';
+import { GalleryResponse } from '@/model/response/gallery/gallery-response';
 
 interface CardProps {
     data: {
@@ -22,7 +21,7 @@ const Card: React.FC<CardProps> = ({ data }) => {
         <div className='flex flex-row gap-5'>
             <Link href={`/u/information/news/${data.id}`} className='relative bg-gray-400 w-[408px] h-[212px]'>
                 <img className='w-full h-full bg-slate-600 object-cover' alt={data.title} src={data.thumbnail} />
-                {/* <div className='absolute bottom-0 right-0 bg-secondary800 w-[194px] h-[46px]'></div> */}
+                <div className='absolute bottom-0 right-0 bg-secondary800 w-[194px] h-[46px]'></div>
             </Link>
             <div className='flex-1'>
                 <h3 className='text-secondary800 font-semibold text-[28px] mb-3'>{data.title}</h3>
@@ -32,10 +31,10 @@ const Card: React.FC<CardProps> = ({ data }) => {
     )
 }
 
-export default function NewsPage() {
+export default function GalleryPage() {
     const pathname = usePathname();
     const repository = useContext(AppContext).repository;
-    const [newsData, setNewsData] = useState<NewsResponse[] | null>(null);
+    const [galleryData, setGalleryData] = useState<GalleryResponse[] | null>(null);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [noData, setNoData] = useState(false);
@@ -43,15 +42,16 @@ export default function NewsPage() {
     const loadMoreData = () => {
         if (!loading && !noData) {
             setLoading(true);
-            if (newsData) {
-                repository.getNextPageNews(
-                    newsData[newsData.length - 1].id,
+            if (galleryData) {
+                repository.getNextGalleryPage(
+                    galleryData[galleryData.length - 1].id,
                     (data) => {
+                        console.log(data)
                         if (data.length === 0) {
                             setNoData(true);
                         } else {
-                            setNewsData((prevNewsData) => {
-                                return prevNewsData ? [...prevNewsData, ...data] : null;
+                            setGalleryData((prevgalleryData) => {
+                                return prevgalleryData ? [...prevgalleryData, ...data] : null;
                             });
                         }
                         setLoading(false);
@@ -62,12 +62,13 @@ export default function NewsPage() {
                     }
                 );
             } else {
-                repository.getFirstPageNews(
+                repository.getFirstGalleryPage(
                     (data) => {
+                        console.log(data)
                         if (data.length === 0) {
                             setNoData(true);
                         } else {
-                            setNewsData(data);
+                            setGalleryData(data);
                         }
                         setLoading(false);
                     },
@@ -89,7 +90,7 @@ export default function NewsPage() {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, [newsData, loading, noData]);
+    }, [galleryData, loading, noData]);
 
     const handleScroll = () => {
         const isBottom =
@@ -102,11 +103,15 @@ export default function NewsPage() {
 
     return (
         <div className="px-[5.5rem] py-[2.1rem]">
-            <Breadcrumb page={["Informasi", "Berita"]}/>
-            <h2 className="mb-9 text-secondary900 font-bold text-4xl">Berita</h2>
-            <div className="flex flex-col gap-9">
-                {newsData?.map((data, index) => (
-                    <Card data={data} key={data.id} />
+            <Breadcrumb page={["Informasi", "Gelari"]}/>
+            <h2 className="mb-9 text-secondary900 font-bold text-4xl">Galeri</h2>
+            <div className="grid grid-cols-4 gap-5">
+                {galleryData?.map((data, index) => (
+                    <div className='h-[200px] flex flex-col'>
+                        <div className='flex-1 bg-secondary300 w-full bg-cover' style={{backgroundImage: `url(${data.url})`}}>
+                        </div>
+                        <div className='w-full py-4 bg-secondary800 font-semibold text-white flex items-center justify-center'>{data.description}</div>
+                    </div>
                 ))}
             </div>
             {loading && <div className="text-center">loading data ...</div>}
