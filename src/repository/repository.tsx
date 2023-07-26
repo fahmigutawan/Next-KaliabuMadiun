@@ -276,6 +276,34 @@ export class Repository {
             })
     }
 
+    getTopGalleryItems(
+        onSuccess: (item: GalleryResponse[]) => void,
+        onFailed: (err: Error) => void
+    ) {
+        getDocs(
+            query(
+                collection(this.firestore, 'gallery'),
+                orderBy('created_at', 'desc'),
+                limit(6)
+            )
+        ).then(res => {
+            onSuccess(
+                res.docs.map(res2 => {
+                    const s: GalleryResponse = {
+                        id: res2.data()['id'],
+                        url: res2.data()['url'],
+                        description: res2.data()['description'],
+                        taken_at: res2.data()['taken_at']
+                    }
+
+                    return s
+                })
+            )
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
     getFirstGalleryPage(
         onSuccess: (item: GalleryResponse[]) => void,
         onFailed: (err: Error) => void
