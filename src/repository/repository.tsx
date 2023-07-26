@@ -344,7 +344,7 @@ export class Repository {
                 lastId
             )
         ).then(s => {
-            const last_created_at = res.get("created_at")
+            const last_created_at = s.get("created_at")
 
             getDocs(
                 query(
@@ -717,11 +717,10 @@ export class Repository {
 
         imageCompression(file, options)
             .then(compressed => {
-                const randomizedUID = create_UUID()
                 const ref = doc(
                     this.firestore,
                     'gallery',
-                    randomizedUID
+                    randomized_id
                 )
 
                 uploadBytes(
