@@ -30,6 +30,7 @@ import {TentangResponse} from "@/model/response/tentang/tentang-response";
 import {SejarahResponse} from "@/model/response/sejarah/sejarah-response";
 import {GeoDemoResponse} from "@/model/response/geo-demo/geo-demo-response";
 import {GalleryResponse} from "@/model/response/gallery/gallery-response";
+import {SopResponse} from "@/model/response/sop/SopResponse";
 
 
 const fbApp = initializeApp(
@@ -349,6 +350,75 @@ export class Repository {
             getDocs(
                 query(
                     collection(this.firestore, 'gallery'),
+                    orderBy('created_at', 'desc'),
+                    startAfter(last_created_at),
+                    limit(8)
+                )
+            ).then(res => {
+                onSuccess(
+                    res.docs.map(res2 => {
+                        const s: GalleryResponse = {
+                            id: res2.data()['id'],
+                            url: res2.data()['url'],
+                            description: res2.data()['description'],
+                            taken_at: res2.data()['taken_at']
+                        }
+
+                        return s
+                    })
+                )
+            }).catch((err:Error) => {
+                onFailed(err)
+            })
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+    getFirstSopDesa(
+        onSuccess:(item:SopResponse[]) => void,
+        onFailed:(err:Error) => void
+    ){
+        getDocs(
+            query(
+                collection(this.firestore, 'sop-desa'),
+                orderBy('created_at', 'desc'),
+                limit(20)
+            )
+        ).then(res => {
+            onSuccess(
+                res.docs.map(res2 => {
+                    const s: SopResponse = {
+                        id: res2.data()['id'],
+                        url: res2.data()['url'],
+                        title: res2.data()['title']
+                    }
+
+                    return s
+                })
+            )
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
+    }
+
+    getNextSopDesa(
+        lastId:string,
+        onSuccess:(item:SopResponse[]) => void,
+        onFailed:(err:Error) => void
+    ){
+        getDoc(
+            doc(
+                this.firestore,
+                'sop-desa',
+                lastId
+            )
+        ).then(s => {
+            const last_created_at = s.get("created_at")
+
+            getDocs(
+                query(
+                    collection(this.firestore, 'sop-desa'),
                     orderBy('created_at', 'desc'),
                     startAfter(last_created_at),
                     limit(8)
