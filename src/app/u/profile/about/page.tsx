@@ -29,13 +29,13 @@ const AboutPage = () => {
         return <Loading />
     }
   return (
-    <div className="px-[5.5rem] py-[2rem]">
+    <div className="px-[45px] xl:px-[5.5rem] py-[2rem]">
       <Breadcrumb page={["Profil", "Tentang"]}/>
-      <h2 className="text-secondary900 text-4xl font-bold mb-[53px]">Tentang Desa Kaliabu</h2>
-      <div className="w-full flex items-center justify-center mb-[4rem]">
-        <div className="bg-gray-400 w-[37.5rem] h-[17.7rem] text-center"></div>
+      <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[32px] lg:mb-[53px]">Tentang Desa Kaliabu</h2>
+      <div className="w-full flex items-center justify-center mb-[30px] lg:mb-[4rem]">
+        <div className="bg-gray-400 md:w-[37.5rem] w-full aspect-[2/1] text-center"></div>
       </div>
-      <p className="whitespace-pre-line">{`${datas?.content}`}</p>
+      <p className="whitespace-pre-line text-xs lg:text-base">{`${datas?.content}`}</p>
     </div>
   )
 }
