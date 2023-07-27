@@ -35,7 +35,6 @@ export default function GalleryPage() {
     const pathname = usePathname();
     const repository = useContext(AppContext).repository;
     const [galleryData, setGalleryData] = useState<GalleryResponse[] | null>(null);
-    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [noData, setNoData] = useState(false);
 
@@ -100,15 +99,15 @@ export default function GalleryPage() {
     };
 
     return (
-        <div className="px-[5.5rem] py-[2.1rem]">
+        <div className="px-[45px] md:px-[5.5rem] py-[2rem]">
             <Breadcrumb page={["Informasi", "Gelari"]}/>
-            <h2 className="mb-9 text-secondary900 font-bold text-4xl">Galeri</h2>
-            <div className="grid grid-cols-4 gap-5">
+            <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[32px] lg:mb-[53px]">Galeri</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-5">
                 {galleryData?.map((data, index) => (
-                    <div key={data.id} className='h-[200px] flex flex-col'>
-                        <div className='flex-1 bg-secondary300 w-full bg-cover bg-center' style={{backgroundImage: `url(${data.url})`}}>
+                    <div key={data.id} className='md:h-[200px] flex flex-col'>
+                        <div className='flex-1 bg-secondary300 w-full aspect-video bg-cover bg-center' style={{backgroundImage: `url(${data.url})`}}>
                         </div>
-                        <div className='w-full py-4 bg-secondary800 font-semibold text-white flex items-center justify-center'>{data.description}</div>
+                        <div className='w-full py-2 md:py-4 bg-secondary800 font-semibold text-white text-[10px] md:text-base flex items-center justify-center'>{data.description}</div>
                     </div>
                 ))}
             </div>

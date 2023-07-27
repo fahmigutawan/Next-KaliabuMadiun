@@ -117,12 +117,12 @@ export const Navbar = () => {
             <div className="w-full bg-white flex md:hidden flex-row justify-between px-9 py-4">
                 <Link href={Routes.HomePage} className='flex items-center space-x-[16px]'>
                     <img src='/images/kab_madiun.png' alt="" className='w-[45px]' />
-                    <div>
+                    <div className="text-black text-xs md:text-[14px]">
                         <p
-                            className='text-black text-[14px] font-semibold'
+                            className='font-semibold'
                         >Desa Kaliabu</p>
                         <p
-                            className='text-black text-[14px] font-normal'
+                            className='font-normal'
                         >Kabupaten Madiun</p>
                     </div>
                 </Link>
@@ -141,7 +141,7 @@ export const Navbar = () => {
                     {navbarItems.map((data, index) => (
                         <div>
                             {data.route ?
-                                <Link href={data.route} key={"m-" + data.word}>{data.word}</Link>
+                                <Link onClick={() => setIsOpen(false)} href={data.route} key={"m-" + data.word}>{data.word}</Link>
                                 :
                                 <div className="flex flex-col items-start gap-3 w-full">
                                     <button className="flex flex-row items-center justify-between w-full" onClick={() => setSubOpen(index)}>
@@ -150,7 +150,7 @@ export const Navbar = () => {
                                     </button>
                                     <div className={`${subOpen === index ? "flex" : "hidden"} flex-col gap-2 font-normal px-4`}>
                                         {data.submenu?.map(data => (
-                                            <Link href={data.route}>{data.word}</Link>
+                                            <Link onClick={() => setIsOpen(false)} href={data.route}>{data.word}</Link>
                                         ))}
                                     </div>
                                 </div>

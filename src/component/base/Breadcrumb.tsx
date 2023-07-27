@@ -7,7 +7,7 @@ interface BreadcrumbProps {
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ page }) => {
   return (
-    <div className='flex flex-row gap-4 items-center font-semibold text-secondary800 mb-4 text-xs md:text-base'>
+    <div className='flex flex-row gap-2 md:gap-4 items-center font-semibold text-secondary800 mb-4 text-xs md:text-base'>
       <AiFillHome />
       {page.map((pageTitle, index) => (
         <React.Fragment key={pageTitle}>

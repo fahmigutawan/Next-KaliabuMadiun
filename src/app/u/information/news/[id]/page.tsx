@@ -20,31 +20,29 @@ const NewsDetailPage = () => {
     repository.getNewsById(
       id,
       (data) => {
-          setNewsData(data)
-          setIsLoading(false)
+        setNewsData(data)
+        setIsLoading(false)
       },
       (error) => {
-          toast.error(error.message);
-          setIsLoading(false)
+        toast.error(error.message);
+        setIsLoading(false)
       }
-  );
-  },[])
+    );
+  }, [])
 
-  if(isLoading){
+  if (isLoading) {
     return <Loading />
   }
 
-  
+
   return (
-    <div className="px-[5.5rem] py-[2rem]">
-      <Breadcrumb page={["Informasi", "Berita", "Nama Berita"]}/>
-      <h2 className="text-secondary900 text-4xl font-bold mb-[53px]">{newsData?.title}</h2>
-      <div className="w-full flex items-center justify-center mb-[4rem]">
-        <div className="bg-gray-400 w-[37.5rem] text-center">
-          <img src={newsData?.thumbnail} alt="" className="w-full"/>
-        </div>
+    <div className="px-[45px] md:px-[5.5rem] py-[2rem]">
+      <Breadcrumb page={["Informasi", "Berita", "Nama Berita"]} />
+      <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[32px] lg:mb-[53px]">{newsData?.title}</h2>
+      <div className="w-full flex items-center justify-center mb-[30px] lg:mb-[4rem]">
+        <img src={newsData?.thumbnail} alt="" className="w-full" />
       </div>
-      <p className="whitespace-pre-line">{`${newsData?.content}`}</p>
+      <p className="whitespace-pre-line text-xs lg:text-base">{`${newsData?.content}`}</p>
     </div>
   )
 }

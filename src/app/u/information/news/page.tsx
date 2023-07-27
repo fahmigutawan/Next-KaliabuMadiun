@@ -19,16 +19,15 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ data }) => {
     return (
-        <div className='flex flex-row gap-5'>
-            <Link href={`/u/information/news/${data.id}`} className='relative bg-gray-400 w-[408px] h-[212px]'>
+        <Link href={`/u/information/news/${data.id}`} className='flex flex-col md:flex-row gap-1 md:gap-5 hover:bg-secondary200'>
+            <div className='relative bg-gray-400 w-full md:w-[408px] aspect-video h-auto md:h-[212px]'>
                 <img className='w-full h-full bg-slate-600 object-cover' alt={data.title} src={data.thumbnail} />
-                {/* <div className='absolute bottom-0 right-0 bg-secondary800 w-[194px] h-[46px]'></div> */}
-            </Link>
-            <div className='flex-1'>
-                <h3 className='text-secondary800 font-semibold text-[28px] mb-3'>{data.title}</h3>
-                <p className='text-secondary700'>{data.content}</p>
             </div>
-        </div>
+            <div className='md:flex-1'>
+                <h3 className='text-secondary800 font-semibold text-lg md:text-[28px] md:mb-3'>{data.title}</h3>
+                <p className='text-secondary700 text-xs md:text-base'>{data.content}</p>
+            </div>
+        </Link>
     )
 }
 
@@ -101,9 +100,9 @@ export default function NewsPage() {
     };
 
     return (
-        <div className="px-[5.5rem] py-[2.1rem]">
+        <div className="px-9 md:px-[5.5rem] py-[2.1rem]">
             <Breadcrumb page={["Informasi", "Berita"]}/>
-            <h2 className="mb-9 text-secondary900 font-bold text-4xl">Berita</h2>
+            <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[28px] lg:mb-[53px]">Berita</h2>
             <div className="flex flex-col gap-9">
                 {newsData?.map((data, index) => (
                     <Card data={data} key={data.id} />

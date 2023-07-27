@@ -7,7 +7,7 @@ export default function HomePage() {
     return (
         <div>
             <HomeBanner />
-            <div className='flex flex-col space-y-[32px] py-[32px] px-[48px]'>
+            <div className='flex flex-col space-y-[32px] py-[32px] px-[35px] md:px-[48px]'>
                 <HomeSekilas />
                 <BeritaTerkini />
                 <GaleriKaliabu />
