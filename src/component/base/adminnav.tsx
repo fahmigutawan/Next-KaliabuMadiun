@@ -43,7 +43,7 @@ export const AdminNav = () => {
         },
         {
             word: 'SOP PENYURATAN',
-            route: "/sop-desa",
+            route: "/a/sop-desa",
         },
         {
             word: 'INFORMASI',
