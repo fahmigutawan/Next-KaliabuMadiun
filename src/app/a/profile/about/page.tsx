@@ -33,7 +33,7 @@ const TentangPage = () => {
 
     return (
         <form className='w-full h-full bg-white p-[16px] overflow-auto flex flex-col justify-between space-y-[32px]'>
-            <Typography className='text-black'>Edit Tentang</Typography>
+            <Typography className='text-black'>Edit Deskripsi Tentang Desa</Typography>
             <div className='flex flex-col space-y-[16px]'>
                 <textarea className="border-2 border-secondary800 p-2" rows={10} value={content} onChange={(e) => setContent(e.target.value)}>
 

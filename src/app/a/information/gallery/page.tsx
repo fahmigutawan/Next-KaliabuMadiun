@@ -16,11 +16,37 @@ export default function AdminGallery() {
     const [loading, setLoading] = useState(false);
     const [showAdd, setShowAdd] = useState(false)
     const [showEdit, setShowEdit] = useState(false)
-    const [galleryData, setGalleryData] = useState<GalleryResponse[]>([])
+    const [galleryData, setGalleryData] = useState<GalleryResponse[] | null>(null)
     const [pickedData, setPickedData] = useState<GalleryResponse | null>(null)
     const repository = useContext(AppContext).repository
     const [shouldRefresh, setShouldRefresh] = useState(false)
-    const router = useRouter()
+
+    const loadMoreData = () => {
+        if (!loading && !noData) {
+            if (galleryData && galleryData.length % 8 === 0) {
+                setLoading(true);
+                repository.getNextGalleryPage(
+                    galleryData[galleryData.length - 1].id,
+                    (data) => {
+                        if (data.length === 0) {
+                            setNoData(true);
+                        } else {
+                            setGalleryData((prevgalleryData) => {
+                                return prevgalleryData ? [...prevgalleryData, ...data] : null;
+                            });
+                        }
+                        setLoading(false);
+                    },
+                    (error) => {
+                        console.error(error);
+                        setLoading(false);
+                    }
+                );
+            } else{
+                setNoData(true)
+            }
+        }
+    };
 
     useEffect(() => {
         repository.getFirstGalleryPage(
@@ -39,14 +65,32 @@ export default function AdminGallery() {
         );
     }, [shouldRefresh]);
 
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [galleryData, loading, noData]);
+
+    const handleScroll = () => {
+        const isBottom =
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight;
+        if (isBottom) {
+            loadMoreData();
+        }
+    };
+
     return (
-        <div className='p-[32px] flex flex-col space-y-[16px] items-end'>
-            <Button
-                onClick={() => {
-                    setShowAdd(true)
-                }}
-                className='bg-primary500 hover:bg-primary600 text-white'
-            >TAMBAH</Button>
+        <div className='p-[32px] flex flex-col space-y-[16px]'>
+            <div className="w-full flex  justify-end">
+                <Button
+                    onClick={() => {
+                        setShowAdd(true)
+                    }}
+                    className='bg-primary500 hover:bg-primary600 text-white'
+                >TAMBAH</Button>
+            </div>
             <table className='w-full'>
                 <thead className='bg-primary400'>
                     <tr>
@@ -109,6 +153,10 @@ export default function AdminGallery() {
                     }}
                 />
             </Modal>
+            <div className="flex items-center justify-center text-lg font-semibold">
+                {loading && <div className="text-center">loading data ...</div>}
+                {noData && <div className="text-center">no data anymore ...</div>}
+            </div>
         </div>
     )
 }

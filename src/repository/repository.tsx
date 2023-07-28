@@ -426,11 +426,10 @@ export class Repository {
             ).then(res => {
                 onSuccess(
                     res.docs.map(res2 => {
-                        const s: GalleryResponse = {
+                        const s: SopResponse = {
                             id: res2.data()['id'],
                             url: res2.data()['url'],
-                            description: res2.data()['description'],
-                            taken_at: res2.data()['taken_at']
+                            title: res2.data()['title'],
                         }
 
                         return s

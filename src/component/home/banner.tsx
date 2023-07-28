@@ -40,10 +40,10 @@ export const HomeBanner = () => {
                     return (
                         <SwiperSlide key={item.id}>
                             <Link href={item.link}>
-                                <img src={item.img_url} alt="" className='w-full aspect-[16/5] absolute top-[120] left-0 object-cover' />
-                                <div className='w-full aspect-[16/5] flex flex-col justify-end p-[32px] relative bg-gradient-to-t from-black to-transparent'>
-                                    <p className='text-[28px] line-clamp-1 text-white font-semibold'>{item.title}</p>
-                                    <p className='text-[18px] line-clamp-3 text-white'>{item.description}</p>
+                                <img src={item.img_url} alt="" className='w-full aspect-[1.8/1] md:aspect-[16/5] absolute top-[120] left-0 object-cover' />
+                                <div className='w-full aspect-[1.8/1] md:aspect-[16/5] flex flex-col justify-end p-[32px] relative bg-gradient-to-t from-black to-transparent'>
+                                    <p className='text-sm text-center md:text-start md:text-[28px] line-clamp-1 text-white font-semibold'>{item.title}</p>
+                                    <p className='hidden md:block text-[18px] line-clamp-3 text-white'>{item.description}</p>
                                 </div>
                             </Link>
                         </SwiperSlide>
