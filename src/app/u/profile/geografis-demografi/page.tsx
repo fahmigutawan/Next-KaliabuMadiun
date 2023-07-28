@@ -25,6 +25,7 @@ const GeoDemoPage = () => {
         );
     }, [])
 
+
     if (isLoading) {
         return <Loading />
     }

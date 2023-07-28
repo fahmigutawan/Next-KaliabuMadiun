@@ -17,7 +17,7 @@ const DocPicker: React.FC<DocPickerProps> = ({ onFilePicked }) => {
     return (
         <input
             type="file"
-            accept=".pdf, .doc, .docx" // Specify accepted file types here
+            accept=".pdf, .doc, .docx"
             onChange={handleFileChange}
         />
     );

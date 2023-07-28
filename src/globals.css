@@ -26,6 +26,15 @@ table, th, td {
   border: 1px solid black;
 }
 
+label.required{
+  font-weight: 500;
+}
+
+label.required::after{
+  content: "*";
+  color: red;
+}
+
 p{
   font-family:'Poppins'
 }
