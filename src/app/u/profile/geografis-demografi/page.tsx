@@ -25,25 +25,24 @@ const GeoDemoPage = () => {
         );
     }, [])
 
-
     if (isLoading) {
         return <Loading />
     }
 
     return (
-        <div className="px-[5.5rem] py-[2rem]">
+        <div className="px-[45px] xl:px-[5.5rem] py-[2rem]">
             <Breadcrumb page={["Profil", "Geografis dan Demografi Desa"]} />
-            <h2 className="text-secondary900 text-4xl font-bold mb-[53px]">Geografis Desa</h2>
-            <div className="bg-gray-400 w-full h-[36rem] text-center mb-[4rem]">
+            <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[32px] lg:mb-[53px]">Geografis Desa</h2>
+            <div className="bg-gray-400 w-full aspect-video md:h-[36rem] text-center mb-3 md:mb-[4rem]">
                 <img src={datas?.geo_url} alt="" className="w-full" />
             </div>
-            <p className="whitespace-pre-line">{`${datas?.geo_content}`}
+            <p className="whitespace-pre-line text-xs md:text-base mb-10">{`${datas?.geo_content}`}
             </p>
-            <h2 className="text-secondary900 text-4xl font-bold  my-[53px]">Demografi Desa</h2>
-            <div className="bg-gray-400 w-full h-[36rem] text-center mb-[4rem]">
+            <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[32px] lg:mb-[53px]">Demografi Desa</h2>
+            <div className="bg-gray-400 w-full aspect-video md:h-[36rem] text-center mb-3 md:mb-[4rem]">
                 <img src={datas?.demo_url} alt="" className="w-full" />
             </div>
-            <p className="whitespace-pre-line">{`${datas?.demo_content}`}</p>
+            <p className="whitespace-pre-line text-xs md:text-base">{`${datas?.demo_content}`}</p>
         </div>
     )
 }
