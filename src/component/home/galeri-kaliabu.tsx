@@ -46,7 +46,7 @@ export const GaleriKaliabu = () => {
             </div>
             {/*ITEM TOP */}
             {topGallery ?
-            <img src={topGallery[0]?.url} alt={topGallery[0]?.description} className='w-full aspect-[2/1] md:aspect-[16/5] bg-slate-600'/>
+            <img src={topGallery[0]?.url} alt={topGallery[0]?.description} className='w-full aspect-[2/1] md:aspect-[16/5] bg-slate-600 object-cover'/>
             :
             <div className='w-full aspect-[2/1] md:aspect-[16/5] bg-slate-600' />
             }
@@ -54,13 +54,13 @@ export const GaleriKaliabu = () => {
             {/*ITEMS BOTTOM */}
             <div className='hidden md:grid grid-cols-4 gap-4'>
                 {topGallery?.slice(1,5)?.map((data) => {
-                    return <img key={data.id} src={data.url} alt={data.description} className='aspect-[16/9] bg-slate-600'/>
+                    return <img key={data.id} src={data.url} alt={data.description} className='aspect-[16/9] bg-slate-600 object-cover'/>
                 })}
             </div>
             {/* MOBILE BOTTOM ITEMS */}
             <div className='grid md:hidden grid-cols-2 gap-3'>
                 {topGallery?.slice(1,3)?.map((data) => {
-                    return <img src={data.url} key={data.id} alt={data.description} className='aspect-[16/9] bg-slate-600' />
+                    return <img src={data.url} key={data.id} alt={data.description} className='aspect-[16/9] bg-slate-600 object-cover' />
                 })}
             </div>
         </div>
