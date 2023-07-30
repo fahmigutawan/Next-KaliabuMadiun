@@ -139,7 +139,7 @@ export const Navbar = () => {
             <div className={`${isOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[100%]"} z-50 fixed pt-16 pb-40 flex 2xl:hidden flex-col justify-between font-semibold w-full bg-white h-full transition-all`}>
                 <div className='flex flex-col px-6 gap-4 title-2 font-bold text-secondary900'>
                     {navbarItems.map((data, index) => (
-                        <div>
+                        <div key={data.word}>
                             {data.route ?
                                 <Link onClick={() => setIsOpen(false)} href={data.route} key={"m-" + data.word}>{data.word}</Link>
                                 :
@@ -150,7 +150,7 @@ export const Navbar = () => {
                                     </button>
                                     <div className={`${subOpen === index ? "flex" : "hidden"} flex-col gap-2 font-normal px-4`}>
                                         {data.submenu?.map(data => (
-                                            <Link onClick={() => setIsOpen(false)} href={data.route}>{data.word}</Link>
+                                            <Link key={data.word} onClick={() => setIsOpen(false)} href={data.route}>{data.word}</Link>
                                         ))}
                                     </div>
                                 </div>

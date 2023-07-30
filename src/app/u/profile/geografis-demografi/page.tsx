@@ -33,15 +33,11 @@ const GeoDemoPage = () => {
         <div className="px-[45px] xl:px-[5.5rem] py-[2rem]">
             <Breadcrumb page={["Profil", "Geografis dan Demografi Desa"]} />
             <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[32px] lg:mb-[53px]">Geografis Desa</h2>
-            <div className="bg-gray-400 w-full aspect-video md:h-[36rem] text-center mb-3 md:mb-[4rem]">
-                <img src={datas?.geo_url} alt="" className="w-full" />
-            </div>
+            <img className="bg-gray-400 h-[256px] aspect-video md:h-[36rem] text-center mb-3 md:mb-[4rem] object-cover" src={datas?.geo_url} alt="" />
             <p className="whitespace-pre-line text-xs md:text-base mb-10">{`${datas?.geo_content}`}
             </p>
             <h2 className="text-secondary900 text-lg lg:text-4xl font-semibold lg:font-bold mb-[32px] lg:mb-[53px]">Demografi Desa</h2>
-            <div className="bg-gray-400 w-full aspect-video md:h-[36rem] text-center mb-3 md:mb-[4rem]">
-                <img src={datas?.demo_url} alt="" className="w-full" />
-            </div>
+            <img className="bg-gray-400 h-[256px] aspect-video md:h-[36rem] text-center mb-3 md:mb-[4rem] object-cover" src={datas?.demo_url} alt="" />
             <p className="whitespace-pre-line text-xs md:text-base">{`${datas?.demo_content}`}</p>
         </div>
     )

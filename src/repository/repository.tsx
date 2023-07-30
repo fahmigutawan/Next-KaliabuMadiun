@@ -1,13 +1,14 @@
-import {initializeApp} from "@firebase/app";
+import { initializeApp } from "@firebase/app";
 import {
     getAuth,
     RecaptchaVerifier,
     signInWithPopup,
     GoogleAuthProvider,
     signInWithPhoneNumber,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    signOut
 } from 'firebase/auth'
-import {deleteObject, getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage'
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import {
     addDoc,
     collection,
@@ -22,15 +23,15 @@ import {
     updateDoc
 } from 'firebase/firestore'
 import imageCompression from 'browser-image-compression';
-import {toast} from 'react-hot-toast'
-import {randomUUID} from "crypto";
-import {BannerResponse} from "@/model/response/home-banner/banner-response";
-import {NewsResponse} from "@/model/response/news/news-response";
-import {TentangResponse} from "@/model/response/tentang/tentang-response";
-import {SejarahResponse} from "@/model/response/sejarah/sejarah-response";
-import {GeoDemoResponse} from "@/model/response/geo-demo/geo-demo-response";
-import {GalleryResponse} from "@/model/response/gallery/gallery-response";
-import {SopResponse} from "@/model/response/sop/SopResponse";
+import { toast } from 'react-hot-toast'
+import { randomUUID } from "crypto";
+import { BannerResponse } from "@/model/response/home-banner/banner-response";
+import { NewsResponse } from "@/model/response/news/news-response";
+import { TentangResponse } from "@/model/response/tentang/tentang-response";
+import { SejarahResponse } from "@/model/response/sejarah/sejarah-response";
+import { GeoDemoResponse } from "@/model/response/geo-demo/geo-demo-response";
+import { GalleryResponse } from "@/model/response/gallery/gallery-response";
+import { SopResponse } from "@/model/response/sop/SopResponse";
 
 
 const fbApp = initializeApp(
@@ -71,6 +72,12 @@ export class Repository {
     private galleryItemRef = (filename: string) => {
         return ref(this.storage, `gallery/${filename}.jpg`)
     }
+    private geoStorageRef = () => {
+        return ref(this.storage, `gallery/geo.jpg`)
+    }
+    private demoStorageRef = () => {
+        return ref(this.storage, `gallery/demo.jpg`)
+    }
 
     /**USERS API*/
     async getAllBanner(): Promise<BannerResponse[]> {
@@ -81,16 +88,16 @@ export class Repository {
                     orderBy('created_at', 'desc')
                 )
             )).docs.map(res => {
-            const s: BannerResponse = {
-                id: res.data()['id'],
-                img_url: res.data()['url'],
-                link: res.data()['link'],
-                title: res.data()['title'],
-                description: res.data()['description']
-            }
+                const s: BannerResponse = {
+                    id: res.data()['id'],
+                    img_url: res.data()['url'],
+                    link: res.data()['link'],
+                    title: res.data()['title'],
+                    description: res.data()['description']
+                }
 
-            return s
-        })
+                return s
+            })
     }
 
     async getLast3News(): Promise<NewsResponse[]> {
@@ -300,7 +307,7 @@ export class Repository {
                     return s
                 })
             )
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
@@ -328,13 +335,13 @@ export class Repository {
                     return s
                 })
             )
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
 
     getNextGalleryPage(
-        lastId:string,
+        lastId: string,
         onSuccess: (item: GalleryResponse[]) => void,
         onFailed: (err: Error) => void
     ) {
@@ -367,18 +374,18 @@ export class Repository {
                         return s
                     })
                 )
-            }).catch((err:Error) => {
+            }).catch((err: Error) => {
                 onFailed(err)
             })
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
 
     getFirstSopDesa(
-        onSuccess:(item:SopResponse[]) => void,
-        onFailed:(err:Error) => void
-    ){
+        onSuccess: (item: SopResponse[]) => void,
+        onFailed: (err: Error) => void
+    ) {
         getDocs(
             query(
                 collection(this.firestore, 'sop-desa'),
@@ -397,16 +404,16 @@ export class Repository {
                     return s
                 })
             )
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
 
     getNextSopDesa(
-        lastId:string,
-        onSuccess:(item:SopResponse[]) => void,
-        onFailed:(err:Error) => void
-    ){
+        lastId: string,
+        onSuccess: (item: SopResponse[]) => void,
+        onFailed: (err: Error) => void
+    ) {
         getDoc(
             doc(
                 this.firestore,
@@ -435,10 +442,10 @@ export class Repository {
                         return s
                     })
                 )
-            }).catch((err:Error) => {
+            }).catch((err: Error) => {
                 onFailed(err)
             })
-        }).catch((err:Error) => {
+        }).catch((err: Error) => {
             onFailed(err)
         })
     }
@@ -670,9 +677,9 @@ export class Repository {
     }
 
     adminEditGeoDemoDesa(
-        geo_url: string,
+        geo_photo: File,
         geo_content: string,
-        demo_url: string,
+        demo_photo: File,
         demo_content: string,
         onSuccess: () => void,
         onFailed: (err: Error) => void
@@ -683,17 +690,45 @@ export class Repository {
             'item'
         )
 
-        updateDoc(
-            ref,
-            {
-                geo_url: geo_url,
-                geo_content: geo_content,
-                demo_url: demo_url,
-                demo_content: demo_content,
-                updated_at: serverTimestamp()
-            }
+        const geoStorageRef = this.geoStorageRef()
+
+        const demoStorageRef = this.demoStorageRef()
+
+        uploadBytes(
+            geoStorageRef,
+            geo_photo
         ).then(() => {
-            onSuccess()
+            uploadBytes(
+                demoStorageRef,
+                demo_photo
+            ).then(() => {
+                getDownloadURL(geoStorageRef)
+                    .then((geo_url) => {
+                        getDownloadURL(demoStorageRef)
+                        .then((demo_url) => {
+                            updateDoc(
+                                ref,
+                                {
+                                    geo_url: geo_url,
+                                    geo_content: geo_content,
+                                    demo_url: demo_url,
+                                    demo_content: demo_content,
+                                    updated_at: serverTimestamp()
+                                }
+                            ).then(() => {
+                                onSuccess()
+                            }).catch((err: Error) => {
+                                onFailed(err)
+                            })
+                        }).catch((err:Error) => {
+                            onFailed(err)
+                        })
+                    }).catch((err: Error) => {
+                        onFailed(err)
+                    })
+            }).catch((err: Error) => {
+                onFailed(err)
+            })
         }).catch((err: Error) => {
             onFailed(err)
         })
@@ -712,8 +747,8 @@ export class Repository {
             .then(() => {
                 getDownloadURL(ref)
                     .then(url => {
-                        addDoc(
-                            collection(this.firestore, 'sop-desa', randomized_id),
+                        setDoc(
+                            doc(this.firestore, 'sop-desa', randomized_id),
                             {
                                 id: randomized_id,
                                 title: title,
@@ -726,8 +761,8 @@ export class Repository {
                             onFailed(err)
                         })
                     }).catch((err: Error) => {
-                    onFailed(err)
-                })
+                        onFailed(err)
+                    })
             })
             .catch((err: Error) => {
                 onFailed(err)
@@ -755,19 +790,34 @@ export class Repository {
     }
 
 
-    async adminLogin(
+    adminLogin(
         email: string,
-        password: string
+        password: string,
+        onSuccess:() => void,
+        onFailed:(err:Error) => void
     ) {
-        return await signInWithEmailAndPassword(
+        signInWithEmailAndPassword(
             this.auth,
             email,
             password
-        )
+        ).then(() => {
+            onSuccess()
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
     }
 
-    adminIsLogin() {
-        return this.auth.currentUser != null
+    adminLogout(
+        onSuccess:() => void,
+        onFailed:(err:Error) => void
+    ){
+        signOut(
+            this.auth
+        ).then(() => {
+            onSuccess()
+        }).catch((err:Error) => {
+            onFailed(err)
+        })
     }
 
     adminAddGalleryItem(

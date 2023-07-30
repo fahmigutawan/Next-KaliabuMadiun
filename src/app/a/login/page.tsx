@@ -3,27 +3,32 @@ import { useContext, useState, FormEvent } from "react"
 import { AppContext } from "@/context/provider"
 import { toast } from "react-hot-toast"
 import { TentangResponse } from "@/model/response/tentang/tentang-response"
+import { useRouter } from "next/navigation"
 
 const LoginPAge = () => {
     const repository = useContext(AppContext).repository;
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
+    const router = useRouter()
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        try {
-            await repository.adminLogin(email, password);
-            if (repository.adminIsLogin()) {
+        toast.loading("Sedang mengecek kredensial")
+        repository.adminLogin(
+            email,
+            password,
+            () => {
                 toast.dismiss()
-                toast.success("Login successful!");
-            } else {
+                toast.success("Berhasil login, tunggu beberapa detik")
+                setTimeout(() => {
+                    router.push("/a")
+                }, 1000)
+            },
+            (err) => {
                 toast.dismiss()
-                toast.error("Invalid email or password");
+                toast.error(err.message)
             }
-        } catch (error) {
-            toast.dismiss()
-            toast.error("An error occurred during login");
-        }
+        )
     }
 
     return (

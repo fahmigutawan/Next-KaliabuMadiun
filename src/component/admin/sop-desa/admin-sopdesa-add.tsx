@@ -17,7 +17,7 @@ const DocPicker: React.FC<DocPickerProps> = ({ onFilePicked }) => {
     return (
         <input
             type="file"
-            accept=".pdf, .doc, .docx"
+            accept=".pdf"
             onChange={handleFileChange}
         />
     );
@@ -39,15 +39,18 @@ export const AdminSopDesaAdd: React.FC<AdminSopDesaAddProps> = ({
 
     function handleAddPhoto() {
         if (docFile != null) {
+            toast.loading("Sedang mengunggah")
             repository.adminAddSopDesa(
                 docFile,
                 title,
                 () => {
+                    toast.dismiss()
+                    toast.success("Berhasil disimpan")
                     onShowAddChange(false)
                     onShouldRefreshChange(true)
                 },
                 (error) => {
-                    console.log(error.message)
+                    toast.dismiss()
                     toast.error(error.message)
                 }
             )
@@ -67,7 +70,7 @@ export const AdminSopDesaAdd: React.FC<AdminSopDesaAddProps> = ({
                     onChange={(s) => {
                         setTitle(s.target.value)
                     }}
-                    placeholder="Deskripsi foto"
+                    placeholder="Deskripsi dokumen"
                     className='w-full'
                 />
             </div>

@@ -1,12 +1,14 @@
 'use client'
 
 import { Routes } from "@/routes/routes"
-import { Typography } from "@mui/material"
+import { Button, Typography } from "@mui/material"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { BiMenu, BiChevronRight } from 'react-icons/bi'
 import { GrClose } from 'react-icons/gr'
-import { useState } from "react"
+import { useState, useContext } from "react"
+import { AppContext } from "@/context/provider"
+import toast from "react-hot-toast"
 
 type SubmenuItem = {
     word: string,
@@ -23,6 +25,8 @@ export const AdminNav = () => {
     const pathname = usePathname()
     const [isOpen, setIsOpen] = useState(false);
     const [subOpen, setSubOpen] = useState<number | null>(null);
+    const repository = useContext(AppContext).repository
+    const router = useRouter()
     const navbarItems: NavbarItem[] = [
         {
             word: 'PROFIL',
@@ -58,12 +62,16 @@ export const AdminNav = () => {
                 }
             ]
         },
+        {
+            word: 'BANNER',
+            route: "/a/home-banner"
+        }
     ]
 
     return (
         <nav className="w-full">
             <div className="hidden md:flex w-full bg-white justify-between z-30 px-5 ">
-                <div className='flex items-center space-x-[16px] py-4'>
+                <Link href={Routes.HomePage} className='flex items-center space-x-[16px] py-4'>
                     <img src='/images/kab_madiun.png' alt="" className='w-[70px]' />
                     <div>
                         <p
@@ -73,7 +81,7 @@ export const AdminNav = () => {
                             className='text-black text-[14px] font-normal'
                         >Kabupaten Madiun</p>
                     </div>
-                </div>
+                </Link>
                 <div className='flex text-black font-semibold items-center'>
                     {navbarItems.map((item) => (
                         <div
@@ -99,6 +107,23 @@ export const AdminNav = () => {
                                 </div>}
                         </div>
                     ))}
+                    <Button variant="contained" className="bg-red-500 hover:bg-red-600" onClick={() => { 
+                        toast.loading("Harap tunggu")
+                        repository.adminLogout(
+                            () => {
+                                toast.dismiss()
+                                toast.success("Berhasil keluar")
+
+                                setTimeout(() => {
+                                    router.push("/u/home")
+                                }, 500)
+                            },
+                            (err) => {
+                                toast.dismiss()
+                                toast.error(err.message)
+                            }
+                        )
+                    }}>Keluar</Button>
                 </div>
             </div>
             <div className="w-full bg-white flex md:hidden flex-row justify-between px-9 py-4">
@@ -115,7 +140,8 @@ export const AdminNav = () => {
                 </Link>
                 <button onClick={() => {
                     setIsOpen(!isOpen)
-                    setSubOpen(null)}} className="p-2">
+                    setSubOpen(null)
+                }} className="p-2">
                     {isOpen ?
                         <GrClose className="text-lg" />
                         :
@@ -126,18 +152,18 @@ export const AdminNav = () => {
             <div className={`${isOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[100%]"} z-50 fixed pt-16 pb-40 flex 2xl:hidden flex-col justify-between font-semibold w-full bg-white h-full transition-all`}>
                 <div className='flex flex-col px-6 gap-4 title-2 font-bold text-secondary900'>
                     {navbarItems.map((data, index) => (
-                        <div>
+                        <div key={data.word}>
                             {data.route ?
                                 <Link onClick={() => setIsOpen(false)} href={data.route} key={"m-" + data.word}>{data.word}</Link>
                                 :
                                 <div className="flex flex-col items-start gap-3 w-full">
                                     <button className="flex flex-row items-center justify-between w-full" onClick={() => setSubOpen(index)}>
                                         {data.word}
-                                        <BiChevronRight className="text-2xl"/>
+                                        <BiChevronRight className="text-2xl" />
                                     </button>
                                     <div className={`${subOpen === index ? "flex" : "hidden"} flex-col gap-2 font-normal px-4`}>
                                         {data.submenu?.map(data => (
-                                            <Link onClick={() => setIsOpen(false)} href={data.route}>{data.word}</Link>
+                                            <Link key={data.word} onClick={() => setIsOpen(false)} href={data.route}>{data.word}</Link>
                                         ))}
                                     </div>
                                 </div>

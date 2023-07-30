@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import toast from 'react-hot-toast'
 import { AdminSopDesaAdd } from "@/component/admin/sop-desa/admin-sopdesa-add";
 import { SopResponse } from "@/model/response/sop/SopResponse";
+import Link from "next/link";
 
 export default function AdminSopDesa() {
     const [noData, setNoData] = useState(false);
@@ -98,8 +99,8 @@ export default function AdminSopDesa() {
                     {dokumenData?.map((data, index) => {
                         return (
                             <tr key={data.id}>
-                                <td className='align-middle'>
-                                    <img className='max-h-72 w-full object-cover' src={data.url} alt="" />
+                                <td className='align-middle text-center'>
+                                    <Link href={data.url} className="text-blue-500 underline">Buka Dokumen</Link>
                                 </td>
                                 <td className='align-middle text-center'>
                                     {data.title}
@@ -117,6 +118,7 @@ export default function AdminSopDesa() {
                                                     setShouldRefresh(true)
                                                 },
                                                 (error) => {
+                                                    toast.dismiss()
                                                     toast.error(error.message)
                                                 }
                                             )
