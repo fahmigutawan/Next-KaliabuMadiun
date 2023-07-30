@@ -1,9 +1,9 @@
 'use client'
 
-import {useContext, useEffect} from "react";
-import {AppContext} from "@/context/provider";
-import {usePathname, useRouter} from "next/navigation";
-import {Routes} from "@/routes/routes";
+import { useContext, useEffect } from "react";
+import { AppContext } from "@/context/provider";
+import { usePathname, useRouter } from "next/navigation";
+import { Routes } from "@/routes/routes";
 import { AdminNav } from "@/component/base/adminnav";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,7 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     return (
         <div>
-            <AdminNav />
+            {pathname.includes("/a/login") ?
+                "" : <AdminNav />
+            }
             {children}
         </div>
     )
