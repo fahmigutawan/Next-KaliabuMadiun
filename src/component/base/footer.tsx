@@ -14,23 +14,17 @@ export const Footer = () => {
                 </div>
                 <div className='w-full md:w-1/4 flex flex-col space-y-[8px]'>
                     <p className='text-white text-[14px] md:text-[18px] font-semibold'>Profil</p>
-                    <Link href={''}>
+                    <Link href={"/u/profile/about"}>
                         <p className='text-white'>Tentang</p>
                     </Link>
-                    <Link href={''}>
-                        <p className='text-white'>Visi dan Misi</p>
-                    </Link>
-                    <Link href={''}>
+                    <Link href={"/u/profile/history"}>
                         <p className='text-white'>Sejarah Desa</p>
                     </Link>
-                    <Link href={''}>
-                        <p className='text-white'>Geografi Desa</p>
-                    </Link>
-                    <Link href={''}>
-                        <p className='text-white'>Demografi Desa</p>
+                    <Link href={"/u/profile/geografis-demografi"}>
+                        <p className='text-white'>Geografis dan Demografi Desa</p>
                     </Link>
                 </div>
-                <div className='w-full md:w-1/4 flex flex-col space-y-[8px]'>
+                {/* <div className='w-full md:w-1/4 flex flex-col space-y-[8px]'>
                     <p className='text-white text-[14px] md:text-[18px] font-semibold'>Pemerintahan</p>
                     <Link href={''}>
                         <p className='text-white'>Struktur Organisasi</p>
@@ -41,17 +35,23 @@ export const Footer = () => {
                     <Link href={''}>
                         <p className='text-white'>Lembaga Desa</p>
                     </Link>
-                </div>
+                </div> */}
                 <div className='w-full md:w-1/4 flex flex-col space-y-[8px]'>
                     <p className='text-white text-[14px] md:text-[18px] font-semibold'>Layanan</p>
-                    <Link href={''}>
-                        <p className='text-white'>Layanan Pengaduan</p>
-                    </Link>
-                    <Link href={''}>
+                    <Link href={"/u/profile/document"}>
                         <p className='text-white'>Pengajuan Surat</p>
                     </Link>
                     <Link href={''}>
                         <p className='text-white'>Kritik dan Saran</p>
+                    </Link>
+                </div>
+                <div className='w-full md:w-1/4 flex flex-col space-y-[8px]'>
+                    <p className='text-white text-[14px] md:text-[18px] font-semibold'>Informasi</p>
+                    <Link href={"/u/information/news"}>
+                        <p className='text-white'>Berita</p>
+                    </Link>
+                    <Link href={"/u/information/gallery"}>
+                        <p className='text-white'>Galeri</p>
                     </Link>
                 </div>
             </div>
