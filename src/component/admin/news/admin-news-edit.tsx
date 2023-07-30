@@ -48,6 +48,7 @@ export const AdminNewsEdit: React.FC<AdminNewsEditProps> = ({
                     placeholder="Deskripsi yang ditampilkan"
                     className='w-full'
                     value={description}
+                    multiline={true}
                 />
             </div>
             <Button onClick={() => {
