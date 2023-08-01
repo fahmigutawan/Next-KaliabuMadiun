@@ -38,7 +38,7 @@ export const BeritaTerkini = () => {
             </div>
             {
                 data && <div className='flex flex-col md:flex-row w-full md:space-x-[16px] gap-4'>
-                    <Link href={`/u/information/news/${data[0].id}`} className='w-full md:w-1/2 hover:bg-gray-100'>
+                    {data.length >= 1 && <Link href={`/u/information/news/${data[0].id}`} className='w-full md:w-1/2 hover:bg-gray-100'>
                         {/*ITEM 1*/}
                         <img className='bg-slate-600 w-full aspect-[16/8] object-cover' alt={''} src={data[0].thumbnail} />
                         <div>
@@ -51,10 +51,10 @@ export const BeritaTerkini = () => {
                                 </p>
                             </div>
                         </div>
-                    </Link>
+                    </Link>}
                     <div className='w-full md:w-1/2 h-full flex flex-col space-y-[16px]'>
                         {/*ITEM 2*/}
-                        <Link href={`/u/information/news/${data[1].id}`} className='w-full flex flex-col md:flex-row space-x-[8px] hover:bg-gray-100'>
+                        {data.length >= 2 && <Link href={`/u/information/news/${data[1].id}`} className='w-full flex flex-col md:flex-row space-x-[8px] hover:bg-gray-100'>
                             <img className='w-full md:w-1/2 aspect-[16/9] bg-slate-600 object-cover' alt={''} src={data[1].thumbnail} />
                             <div className='w-full file:md:w-1/2'>
                                 <div>
@@ -66,10 +66,10 @@ export const BeritaTerkini = () => {
                                     </p>
                                 </div>
                             </div>
-                        </Link>
+                        </Link>}
 
                         {/*ITEM 3*/}
-                        <Link href={`/u/information/news/${data[2].id}`} className='w-full flex flex-col md:flex-row space-x-[8px] hover:bg-gray-100'>
+                        {data.length >= 3 && <Link href={`/u/information/news/${data[2].id}`} className='w-full flex flex-col md:flex-row space-x-[8px] hover:bg-gray-100'>
                             <img className='w-full md:w-1/2 aspect-[16/9] bg-slate-600 object-cover' alt={''} src={data[2].thumbnail} />
                             <div className='w-full file:md:w-1/2'>
                                 <div>
@@ -81,7 +81,7 @@ export const BeritaTerkini = () => {
                                     </p>
                                 </div>
                             </div>
-                        </Link>
+                        </Link>}
                     </div>
                 </div>
             }
